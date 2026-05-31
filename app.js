@@ -347,6 +347,14 @@ function parsePodcastTime(t){
  const p=t.split(':').map(Number);
  return p[0]*60+p[1];
 }
+function podcastMarkerPosition(time){
+ const total=parsePodcastTime(PODCAST_TOTAL);
+ if(!total) return 0;
+ const pct=(parsePodcastTime(time)/total)*100;
+ if(pct<=0) return {left:0,align:'start'};
+ if(pct>=100) return {left:100,align:'end'};
+ return {left:pct,align:'center'};
+}
 function chapterTimelineRange(index){
  const total=parsePodcastTime(PODCAST_TOTAL);
  const ch=PODCAST_CHAPTERS[index];
@@ -432,8 +440,8 @@ function podcastTimelineHtml(activeIndex=0){
     <div class="podcast-time-readout"><span class="podcast-current">${ch.current}</span><span class="podcast-slash"> / </span><span class="podcast-total">${PODCAST_TOTAL}</span></div>
     <div class="podcast-track-gutter" aria-hidden="true"></div>
     <div class="podcast-timeline-meta">
-      <div class="podcast-chapters-bar">${PODCAST_CHAPTERS.map((c,i)=>`<button type="button" class="chapter-seg${i===activeIndex?' active':''}" data-chapter="${i}" style="flex:${c.flex}" title="${c.start} — ${c.end}"><span class="chapter-seg-name">${c.title}</span></button>`).join('')}</div>
-      <div class="podcast-marker-row">${markers.map(m=>`<span class="podcast-marker">${m}</span>`).join('')}</div>
+      <div class="podcast-chapters-bar">${PODCAST_CHAPTERS.map((c,i)=>`<button type="button" class="chapter-seg${i===activeIndex?' active':''}" data-chapter="${i}" title="${c.start} — ${c.end}"><span class="chapter-seg-name">${c.title}</span></button>`).join('')}</div>
+      <div class="podcast-marker-row">${markers.map(m=>{const pos=podcastMarkerPosition(m);return `<span class="podcast-marker align-${pos.align}" style="left:${pos.left}%">${m}</span>`;}).join('')}</div>
     </div>
     <div class="podcast-track-gutter" aria-hidden="true"></div>
   </div>
