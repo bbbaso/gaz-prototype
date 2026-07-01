@@ -88,6 +88,27 @@ const PODCAST_CHAPTERS=[
  }
 ];
 
+const INLINE_TESTS={
+ course:[
+  {id:'ct1',afterIndex:0,title:'Тест после «Введение»',sectionLabel:'Урок 1',questions:3,pass:'80%',attempts:'2'},
+  {id:'ct2',afterIndex:2,title:'Тест после «Механические опасности»',sectionLabel:'Урок 3',questions:4,pass:'80%',attempts:'2'}
+ ],
+ longread:[
+  {id:'lt1',afterIndex:1,title:'Тест по разделу «Виды опасностей»',sectionLabel:'Раздел 2',questions:3,pass:'70%',attempts:'2'}
+ ]
+};
+const COLLAB_TEAM=[
+ {id:'ak',name:'Анна К.',initials:'АК',color:'#D8F0F4'},
+ {id:'ms',name:'Михаил С.',initials:'МС',color:'#F5ECE2'},
+ {id:'ev',name:'Елена В.',initials:'ЕВ',color:'#E9EEF2'},
+ {id:'dv',name:'Дмитрий В.',initials:'ДВ',color:'#EDE8F8'}
+];
+const COLLAB_COMMENTS=[
+ {id:1,author:'Анна К.',initials:'АК',color:'#D8F0F4',time:'10:24',text:'Предлагаю упростить формулировку в блоке «Важно» — слишком длинно для оператора.',pinTop:'34%',pinLeft:'58%',resolved:false},
+ {id:2,author:'Михаил С.',initials:'МС',color:'#F5ECE2',time:'11:02',text:'Нужна задача: добавить пример с маркированным изображением в урок 2.',pinTop:'52%',pinLeft:'42%',resolved:false,task:true},
+ {id:3,author:'Елена В.',initials:'ЕВ',color:'#E9EEF2',time:'Вчера',text:'Тест между уроками 1 и 2 — ок, оставляем 3 вопроса.',pinTop:'68%',pinLeft:'36%',resolved:true}
+];
+
 function docBlocks(n,items){
  return items.slice(0,n);
 }
@@ -249,20 +270,96 @@ function itemMeta(type,i){
  return `${pluralRu(blocks[i],'блок','блока','блоков')} • ${mins[i]} мин`;
 }
 function blockIcon(asset,label){
- return `<button class="block"><div class="icon"><img class="block-icon" src="assets/${asset}" alt=""/></div>${label}</button>`;
+ return `<button class="block" type="button"><div class="icon"><img class="block-icon" src="assets/${asset}" alt=""/></div>${label}</button>`;
+}
+function blockIconText(char,label){
+ return `<button class="block" type="button"><div class="icon block-icon-text">${char}</div>${label}</button>`;
 }
 function theoryBlocks(type){
  const blocks=[
-  `<button class="block"><div class="icon block-icon-text">T</div>Текст</button>`,
+  `<button class="block" type="button"><div class="icon block-icon-text">T</div>Текст</button>`,
   blockIcon('Изображение.svg','Изображение'),
   blockIcon('Видео.svg','Видео'),
   blockIcon('Файл.svg','Файл'),
-  blockIcon('Важный блок.svg','Важный блок')
+  blockIcon('Важный блок.svg','Важный блок'),
+  blockIconText('1→3','Шаги'),
+  blockIconText('⏱','Временная шкала'),
+  blockIconText('Аа','Глоссарий'),
+  blockIconText('⊕','Маркированное изображение')
  ];
  if(type==='longread'||type==='course'){
   blocks.push(blockIcon('Блок-схема.svg','Блок-схема'),blockIcon('Таблица.svg','Таблица'),blockIcon('Диаграмма.svg','Диаграмма'));
  }
  return blocks.join('');
+}
+function structureNavHtml(type,items){
+ const inline=INLINE_TESTS[type]||[];
+ let html='';
+ let lessonNum=0;
+ items.forEach((title,i)=>{
+  lessonNum+=1;
+  const on=i===0&&(type!=='longread'&&type!=='course')?' on':'';
+  html+=`<button class="item material-nav${on}" data-index="${i}" data-type="${type}"><div class="thumb">${lessonNum}</div><div class="item-body"><div class="it">${title}</div><div class="im">${itemMeta(type,i)}</div></div></button>`;
+  inline.filter(t=>t.afterIndex===i).forEach(t=>{
+   html+=`<button class="item inline-test-nav" data-type="${type}" data-test-id="${t.id}" data-final="false"><div class="thumb inline-test-thumb">◎</div><div class="item-body"><div class="it">${t.title}</div><div class="im">${t.questions} вопроса • проходной ${t.pass}</div></div></button>`;
+  });
+ });
+ return html;
+}
+function getInlineTest(type,id){
+ return (INLINE_TESTS[type]||[]).find(t=>t.id===id);
+}
+function applyTestView(sec,type,{finalTest=false,inlineId=null}={}){
+ const area=sec?.querySelector('.test-area');
+ if(!area) return;
+ const eye=area.querySelector('.test-eye');
+ const title=area.querySelector('.test-title');
+ const desc=area.querySelector('.test-desc');
+ const aiHint=area.querySelector('.test-ai-hint');
+ const qCount=area.querySelector('.test-q-count');
+ const passVal=area.querySelector('.test-pass-val');
+ const attemptsVal=area.querySelector('.test-attempts-val');
+ const src={video:'видео',podcast:'подкаста',longread:'лонгрида',course:'уроков курса'}[type];
+ if(finalTest){
+  if(eye) eye.textContent='Итоговый тест';
+  if(title) title.textContent='Тест по сгенерированному материалу';
+  if(desc) desc.textContent=`AI подготовил вопросы на основе ${src}. Инструктор может изменить тип вопроса, варианты ответов, правильный ответ и пояснение.`;
+  if(aiHint) aiHint.textContent='Найдено 6 ключевых тем. Сгенерировано 6 вопросов: 3 с одним ответом, 2 с несколькими ответами, 1 сопоставление.';
+  if(qCount) qCount.textContent='6';
+  if(passVal) passVal.textContent='80%';
+  if(attemptsVal) attemptsVal.textContent='2';
+  area.dataset.testMode='final';
+  area.dataset.inlineId='';
+  return;
+ }
+ const t=getInlineTest(type,inlineId);
+ if(!t) return;
+ if(eye) eye.textContent='Промежуточный тест';
+ if(title) title.textContent=t.title;
+ if(desc) desc.textContent=`Проверка после ${t.sectionLabel.toLowerCase()}. AI сгенерировал вопросы по пройденному материалу — можно отредактировать перед публикацией.`;
+ if(aiHint) aiHint.textContent=`Сгенерировано ${t.questions} вопроса по содержанию «${t.sectionLabel}».`;
+ if(qCount) qCount.textContent=String(t.questions);
+ if(passVal) passVal.textContent=t.pass;
+ if(attemptsVal) attemptsVal.textContent=t.attempts;
+ area.dataset.testMode='inline';
+ area.dataset.inlineId=t.id;
+}
+function openTestEditor(sec,type,{finalTest=false,inlineId=null}={}){
+ sec.querySelectorAll('.content-area,.cover-area').forEach(x=>x.classList.add('hidden'));
+ sec.querySelector('.test-area')?.classList.remove('hidden');
+ sec.querySelectorAll('.theory-right').forEach(x=>x.classList.add('hidden'));
+ sec.querySelectorAll('.test-right').forEach(x=>x.classList.remove('hidden'));
+ sec.querySelectorAll('.test-entry,.inline-test-nav,.material-nav,.cover-nav').forEach(x=>x.classList.remove('on'));
+ if(finalTest) sec.querySelector('.test-entry[data-final="true"]')?.classList.add('on');
+ else sec.querySelector(`.inline-test-nav[data-test-id="${inlineId}"]`)?.classList.add('on');
+ applyTestView(sec,type,{finalTest,inlineId});
+ if(type==='course') refreshCourseRightPanel(sec,0,false);
+}
+function initCollabUi(){
+ const threads=document.getElementById('collabThreads');
+ const pins=document.getElementById('commentPins');
+ if(threads) threads.innerHTML=COLLAB_COMMENTS.map(c=>`<article class="collab-thread${c.resolved?' is-resolved':''}${c.task?' is-task':''}" data-comment-id="${c.id}"><div class="collab-thread-head"><span class="collab-avatar sm" style="background:${c.color}">${c.initials}</span><div><b>${c.author}</b><span class="hint">${c.time}</span></div>${c.task?'<span class="pill collab-task-pill">Задача</span>':''}</div><p>${c.text}</p><div class="collab-thread-actions"><button type="button" class="ghost">Ответить</button>${c.resolved?'<span class="hint">Решено</span>':'<button type="button" class="ghost">Отметить решённым</button>'}</div></article>`).join('');
+ if(pins) pins.innerHTML=COLLAB_COMMENTS.filter(c=>!c.resolved).map(c=>`<button type="button" class="comment-pin" style="top:${c.pinTop};left:${c.pinLeft}" data-comment="${c.id}" aria-label="Комментарий ${c.id}">${c.id}</button>`).join('');
 }
 const COURSE_THEME_COLORS=[
  {id:'gray',label:'Светло-серый'},
@@ -298,9 +395,9 @@ function courseLessonPanel(activeIndex=0){
 }
 function rightTheory(type){
  if(type==='course'){
-  return `<aside class="right theory-right course-right"><div class="rt"><button>Панель настроек</button></div><div class="course-right-theme">${courseThemePanel()}</div><div class="course-right-lesson hidden"></div><div class="sec course-blocks-sec course-right-blocks hidden"><div class="blocks">${theoryBlocks(type)}</div></div></aside>`;
+  return `<aside class="right theory-right course-right"><div class="rt"><button>Панель настроек</button></div><div class="course-right-theme">${courseThemePanel()}</div><div class="course-right-lesson hidden"></div><div class="sec course-blocks-sec course-right-blocks hidden"><div class="blocks blocks-extended">${theoryBlocks(type)}</div></div></aside>`;
  }
- return `<aside class="right theory-right"><div class="rt"><button>Панель настроек</button></div><div class="sec"><div class="blocks">${theoryBlocks(type)}</div></div></aside>`;
+ return `<aside class="right theory-right"><div class="rt"><button>Панель настроек</button></div><div class="sec"><div class="blocks blocks-extended">${theoryBlocks(type)}</div></div></aside>`;
 }
 function leftPanel(type){
  const title={video:'Сцены',podcast:'Главы',longread:'Разделы',course:'Уроки'}[type];
@@ -309,8 +406,8 @@ function leftPanel(type){
  return `<aside class="left">
   <div class="left-section"><h2 class="left-title">Структура</h2></div>
   ${(type==='longread'||type==='course')?`<div class="left-section">${type==='longread'?'<p class="section-kicker">Обложка</p>':''}<button class="item cover-nav on" data-type="${type}"><div class="thumb cover-mini"><img class="cover-icon" src="assets/Cover icon.svg" alt=""/></div><div class="item-body"><div class="it">${type==='course'?'Обложка и оформление':'Обложка'}</div></div></button></div>`:''}
-  <div class="left-section"><p class="section-kicker">${title}</p><div class="list">${items.map((x,i)=>`<button class="item material-nav${i===0&&(type==='video'||type==='podcast')?' on':''}" data-index="${i}" data-type="${type}"><div class="thumb">${i+1}</div><div class="item-body"><div class="it">${x}</div><div class="im">${itemMeta(type,i)}</div></div></button>`).join('')}</div><button class="btn left-add-btn" style="width:100%;margin-top:12px">＋ Добавить ${addLabel}</button></div>
-  <div class="left-section"><p class="section-kicker">Проверка знаний</p><button class="test-entry test-nav" data-type="${type}"><div class="topline"><b>Тест по материалу</b><span class="pill ai-pill">AI</span></div><div class="im">6 вопросов • проходной балл 80%</div><div class="im">Создан по сгенерированной теории</div></button>${aiGenerateBtn('Сгенерировать новый','test-nav',` data-type="${type}" style="width:100%;margin-top:10px"`)}</div>
+  <div class="left-section"><p class="section-kicker">${title}</p><div class="list">${(type==='course'||type==='longread')?structureNavHtml(type,items):items.map((x,i)=>`<button class="item material-nav${i===0&&(type==='video'||type==='podcast')?' on':''}" data-index="${i}" data-type="${type}"><div class="thumb">${i+1}</div><div class="item-body"><div class="it">${x}</div><div class="im">${itemMeta(type,i)}</div></div></button>`).join('')}</div>${(type==='course'||type==='longread')?`<button class="btn left-add-inline-test" type="button" style="width:100%;margin-top:8px">＋ Добавить тест между разделами</button>`:''}<button class="btn left-add-btn" style="width:100%;margin-top:${type==='course'||type==='longread'?'8':'12'}px">＋ Добавить ${addLabel}</button></div>
+  <div class="left-section"><p class="section-kicker">Проверка знаний</p><button class="test-entry test-nav" data-type="${type}" data-final="true"><div class="topline"><b>Итоговый тест</b><span class="pill ai-pill">AI</span></div><div class="im">6 вопросов • проходной балл 80%</div><div class="im">Создан по сгенерированной теории</div></button>${aiGenerateBtn('Сгенерировать новый','test-nav',` data-type="${type}" data-final="true" style="width:100%;margin-top:10px"`)}</div>
  </aside>`;
 }
 function rightTest(){return `<aside class="right test-right hidden"><div class="rt"><button>Панель настроек</button></div><div class="sec"><div class="blocks"><button class="block on"><div class="icon">◎</div>Один ответ</button><button class="block"><div class="icon">☑</div>Несколько ответов</button><button class="block"><div class="icon">⇄</div>Сопоставление</button><button class="block"><div class="icon">✓</div>Верно / неверно</button></div></div><div class="sec"><h3>Проходной балл</h3>${mkSelect(['60%','70%','80%','90%','100%'],'80%')}</div><div class="sec"><h3>Попытки</h3>${mkSelect(['1 попытка','2 попытки','3 попытки','Без ограничений'],'2 попытки')}</div></aside>`}
@@ -339,7 +436,7 @@ function coverArea(type){
   </div>
 </main>`;
 }
-function testArea(type){const src={video:'видео',podcast:'подкаста',longread:'лонгрида',course:'уроков курса'}[type];return `<main class="main test-area hidden" data-type="${type}"><div class="card pad"><div class="test-hero"><div><div class="eye">Проверочный тест</div><h2>Тест по сгенерированному материалу</h2><p class="hint">AI подготовил вопросы на основе ${src}. Инструктор может изменить тип вопроса, варианты ответов, правильный ответ и пояснение.</p></div><div class="ai-box"><b><img class="ai-orb" src="${assistantUri}"/> AI-подготовка</b><p class="hint">Найдено 6 ключевых тем. Сгенерировано 6 вопросов: 3 с одним ответом, 2 с несколькими ответами, 1 сопоставление.</p></div></div><div class="test-settings"><div class="setting-card"><b>6</b><span class="hint">вопросов</span></div><div class="setting-card"><b>80%</b><span class="hint">проходной балл</span></div><div class="setting-card"><b>2</b><span class="hint">попытки</span></div><div class="setting-card"><b>Сразу</b><span class="hint">показывать результат</span></div></div>${question('Один правильный ответ','Какой из факторов относится к химическим опасностям?')}${question('Несколько правильных ответов','Какие действия помогают снизить риск травм на рабочем месте?')}${matchQuestion()}<button class="btn" style="width:100%;margin-top:8px">＋ Добавить вопрос</button></div></main>`}
+function testArea(type){const src={video:'видео',podcast:'подкаста',longread:'лонгрида',course:'уроков курса'}[type];return `<main class="main test-area hidden" data-type="${type}" data-test-mode="final"><div class="card pad"><div class="test-hero"><div><div class="eye test-eye">Итоговый тест</div><h2 class="test-title">Тест по сгенерированному материалу</h2><p class="hint test-desc">AI подготовил вопросы на основе ${src}. Инструктор может изменить тип вопроса, варианты ответов, правильный ответ и пояснение.</p></div><div class="ai-box"><b><img class="ai-orb" src="${assistantUri}"/> AI-подготовка</b><p class="hint test-ai-hint">Найдено 6 ключевых тем. Сгенерировано 6 вопросов: 3 с одним ответом, 2 с несколькими ответами, 1 сопоставление.</p></div></div><div class="test-settings"><div class="setting-card"><b class="test-q-count">6</b><span class="hint">вопросов</span></div><div class="setting-card"><b class="test-pass-val">80%</b><span class="hint">проходной балл</span></div><div class="setting-card"><b class="test-attempts-val">2</b><span class="hint">попытки</span></div><div class="setting-card"><b>Сразу</b><span class="hint">показывать результат</span></div></div>${question('Один правильный ответ','Какой из факторов относится к химическим опасностям?')}${question('Несколько правильных ответов','Какие действия помогают снизить риск травм на рабочем месте?')}${matchQuestion()}<button class="btn" style="width:100%;margin-top:8px">＋ Добавить вопрос</button></div></main>`}
 function question(type,title){return `<div class="q-card"><div class="q-head"><span class="q-type">${type}</span><div><button class="ghost">✎</button>${deleteBtn()}</div></div><label><span class="label">Вопрос</span><textarea class="field">${title}</textarea></label><div style="margin-top:12px"><div class="ans">A&nbsp;&nbsp; Высокий уровень шума</div><div class="ans ok">B&nbsp;&nbsp; Пары растворителей <span>✓</span></div><div class="ans">C&nbsp;&nbsp; Скользкий пол</div><div class="ans">D&nbsp;&nbsp; Движущиеся части оборудования</div></div><label style="display:block;margin-top:14px"><span class="label">Пояснение после ответа</span><textarea class="field">Поясните сотруднику, почему выбранный ответ правильный и как это связано с рабочей ситуацией.</textarea></label></div>`}
 function matchQuestion(){return `<div class="q-card"><div class="q-head"><span class="q-type">Сопоставление</span><div><button class="ghost">✎</button>${deleteBtn()}</div></div><label><span class="label">Задание</span><textarea class="field">Соотнесите тип опасности с примером на производстве.</textarea></label><div class="minirow"><input class="field" value="Химическая опасность"><span>→</span><input class="field" value="Пары растворителей"></div><div class="minirow"><input class="field" value="Механическая опасность"><span>→</span><input class="field" value="Движущиеся части оборудования"></div><button class="btn" style="margin-top:10px">＋ Добавить пару</button></div>`}
 function videoCenter(){return `<main class="main content-area material-area hidden"><div class="card"><div class="video"><div class="slide"><div class="slide-inner"></div><div class="slide-player"><span class="player-play">▶</span><div class="prog"><span></span></div><span class="player-time">0:12 / 0:45</span></div></div><div class="avatar-zone"><img class="video-photo" src="${videoSlidePhotos[0]}" alt="avatar"/></div><button class="play-big">▶</button></div></div><div class="card" style="margin-top:18px"><div class="panel-tabs"><div class="tg"><button class="in-tab tab-click on" data-group="v" data-target="v1">Текст на слайде</button><button class="in-tab tab-click" data-group="v" data-target="v2">Сценарий</button><button class="in-tab tab-click" data-group="v" data-target="v3">Настройки сцены</button></div><button class="btn ai-btn"><img class="ai-orb" src="${assistantUri}"/>Внести изменения</button></div><div id="v1" class="body panel v video-text-panel"><p class="section-kicker">Заголовок</p><label><span class="label">Текст заголовка</span><input class="field video-title-input" value=""></label><p class="section-kicker" style="margin-top:22px">Основной текст</p><div class="video-theses"></div><button class="btn" style="margin-top:12px">＋ Добавить тезис</button></div><div id="v2" class="panel v hidden video-scripts"></div><div id="v3" class="body panel v hidden" style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><label><span class="label">Фон сцены</span>${mkSelect(['Производственное помещение','Офис','Склад','Открытая площадка'],'Производственное помещение')}</label><label><span class="label">Расположение ведущего</span>${mkSelect(['Справа от текста','Слева от текста','По центру','Только голос'],'Справа от текста')}</label></div></div></main>`}
@@ -626,8 +723,9 @@ document.addEventListener('click',e=>{
  if(!e.target.closest('.select-wrap')) closeAllSelects();
 });
 document.addEventListener('click',e=>{const tab=e.target.closest('.tab-click');if(tab){const group=tab.dataset.group;document.querySelectorAll(`.tab-click[data-group="${group}"]`).forEach(x=>x.classList.remove('on'));tab.classList.add('on');document.querySelectorAll(`.${group}`).forEach(x=>x.classList.add('hidden'));document.getElementById(tab.dataset.target).classList.remove('hidden')}
- const test=e.target.closest('.test-nav');if(test){const sec=document.getElementById(test.dataset.type);sec.querySelectorAll('.content-area').forEach(x=>x.classList.add('hidden'));sec.querySelector('.test-area').classList.remove('hidden');sec.querySelectorAll('.theory-right').forEach(x=>x.classList.add('hidden'));sec.querySelectorAll('.test-right').forEach(x=>x.classList.remove('hidden'));sec.querySelectorAll('.test-entry').forEach(x=>x.classList.add('on'));sec.querySelectorAll('.material-nav,.cover-nav').forEach(x=>x.classList.remove('on'))}
- const cover=e.target.closest('.cover-nav');if(cover){const sec=document.getElementById(cover.dataset.type);sec.querySelectorAll('.content-area,.test-area').forEach(x=>x.classList.add('hidden'));sec.querySelector('.cover-area').classList.remove('hidden');sec.querySelectorAll('.theory-right').forEach(x=>x.classList.remove('hidden'));sec.querySelectorAll('.test-right').forEach(x=>x.classList.add('hidden'));sec.querySelectorAll('.test-entry,.material-nav').forEach(x=>x.classList.remove('on'));cover.classList.add('on');if(cover.dataset.type==='course') refreshCourseRightPanel(sec,0,true)}
+ const test=e.target.closest('.test-nav');if(test){openTestEditor(document.getElementById(test.dataset.type),test.dataset.type,{finalTest:test.dataset.final==='true'})}
+ const inlineTest=e.target.closest('.inline-test-nav');if(inlineTest){openTestEditor(document.getElementById(inlineTest.dataset.type),inlineTest.dataset.type,{inlineId:inlineTest.dataset.testId})}
+ const cover=e.target.closest('.cover-nav');if(cover){const sec=document.getElementById(cover.dataset.type);sec.querySelectorAll('.content-area,.test-area').forEach(x=>x.classList.add('hidden'));sec.querySelector('.cover-area').classList.remove('hidden');sec.querySelectorAll('.theory-right').forEach(x=>x.classList.remove('hidden'));sec.querySelectorAll('.test-right').forEach(x=>x.classList.add('hidden'));sec.querySelectorAll('.test-entry,.inline-test-nav,.material-nav').forEach(x=>x.classList.remove('on'));cover.classList.add('on');if(cover.dataset.type==='course') refreshCourseRightPanel(sec,0,true)}
  const mat=e.target.closest('.material-nav');if(mat){
   const sec=document.getElementById(mat.dataset.type);
   const idx=Number(mat.dataset.index||0);
@@ -636,7 +734,7 @@ document.addEventListener('click',e=>{const tab=e.target.closest('.tab-click');i
   sec.querySelector('.material-area').classList.remove('hidden');
   sec.querySelectorAll('.theory-right').forEach(x=>x.classList.remove('hidden'));
   sec.querySelectorAll('.test-right').forEach(x=>x.classList.add('hidden'));
-  sec.querySelectorAll('.test-entry,.cover-nav,.material-nav').forEach(x=>x.classList.remove('on'));
+  sec.querySelectorAll('.test-entry,.cover-nav,.material-nav,.inline-test-nav').forEach(x=>x.classList.remove('on'));
   mat.classList.add('on');
   if(type==='video') applyVideoScene(sec,idx);
   else if(type==='podcast') selectPodcastChapter(sec,idx);
@@ -668,6 +766,29 @@ document.addEventListener('click',e=>{const tab=e.target.closest('.tab-click');i
    syncToggleDependentPanel(toggleBtn);
   }
  }});
+function toggleCollabMode(force){
+ const btn=document.getElementById('collabCommentsBtn');
+ const panel=document.getElementById('collabPanel');
+ const pins=document.getElementById('commentPins');
+ if(!btn||!panel||!pins) return;
+ const shouldOpen=typeof force==='boolean'?force:!btn.classList.contains('on');
+ btn.classList.toggle('on',shouldOpen);
+ btn.setAttribute('aria-pressed',shouldOpen?'true':'false');
+ panel.classList.toggle('hidden',!shouldOpen);
+ pins.classList.toggle('hidden',!shouldOpen);
+ document.body.classList.toggle('collab-mode',shouldOpen);
+}
+document.getElementById('collabCommentsBtn')?.addEventListener('click',()=>toggleCollabMode());
+document.getElementById('collabPanelClose')?.addEventListener('click',()=>toggleCollabMode(false));
+document.getElementById('commentPins')?.addEventListener('click',e=>{
+ const pin=e.target.closest('.comment-pin');
+ if(!pin) return;
+ toggleCollabMode(true);
+ document.querySelectorAll('.collab-thread').forEach(t=>t.classList.remove('is-highlight'));
+ const thread=document.querySelector(`.collab-thread[data-comment-id="${pin.dataset.comment}"]`);
+ if(thread){thread.classList.add('is-highlight');thread.scrollIntoView({behavior:'smooth',block:'nearest'});}
+});
 document.addEventListener('input',e=>{if(e.target.classList.contains('speed')){const box=e.target.closest('.sec');const val=box.querySelector('.speed-val');if(val)val.textContent=Number(e.target.value).toFixed(1)+'x'}});
 
-setTimeout(()=>{document.querySelectorAll('.material-nav').forEach((btn)=>{const idx=Number(btn.dataset.index||0)+1;const thumb=btn.querySelector('.thumb');if(thumb) thumb.textContent=idx;});},0);
+setTimeout(()=>{document.querySelectorAll('.material-nav').forEach((btn)=>{const idx=Number(btn.dataset.index||0)+1;const thumb=btn.querySelector('.thumb');if(thumb&&!btn.classList.contains('inline-test-nav')) thumb.textContent=idx;});},0);
+initCollabUi();
