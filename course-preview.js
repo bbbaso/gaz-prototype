@@ -11,6 +11,7 @@ const COURSE_PREVIEW={
     {type:'h2',text:'Зачем этот курс'},
     {type:'text',text:'Производственные опасности — условия работы, при которых сотрудник может получить травму или заболевание. Курс поможет операторам и мастерам системно смотреть на риски: от базовых определений до ежедневных практик.'},
     {type:'image',src:'assets/video-slide-1.jpg',alt:'Осмотр оборудования',caption:'Перед сменой важно проверить исправность оборудования и отсутствие посторонних в рабочей зоне.'},
+    {type:'audio',title:'Комментарий эксперта: с чего начать смену',duration:'2:14',current:'0:38',cover:'assets/scene-1.jpg',caption:'Короткая аудиозаметка мастера смены — можно слушать по дороге на участок.'},
     {type:'h3',text:'Что вы узнаете'},
     {type:'list',items:['Как отличать химические, механические и организационные риски','Как проводить короткий осмотр рабочей зоны перед сменой','Какие СИЗ подбирать под конкретную задачу','Как фиксировать и эскалировать замеченные опасности']},
     {type:'steps',title:'Как проходить уроки',items:['Прочитайте материал и отметьте непонятные места','Сверьте примеры с реальной зоной, где вы работаете','Выполните мини-чек-лист в конце урока','Переходите к следующему уроку после самопроверки']},
@@ -103,7 +104,7 @@ const COURSE_PREVIEW={
 };
 
 const BLOCK_LABELS={
- text:'',h2:'',h3:'',list:'',image:'Изображение',video:'Видео',file:'Файл',info:'Важно',
+ text:'',h2:'',h3:'',list:'',image:'Изображение',video:'Видео',audio:'Аудио',file:'Файл',info:'Важно',
  steps:'Шаги',timeline:'Временная шкала',glossary:'Глоссарий',markedImage:'Маркированное изображение',
  table:'Таблица',diagram:'Диаграмма',flowchart:'Блок-схема'
 };
@@ -117,6 +118,7 @@ const blockRenderers={
  list:b=>`<section class="lp-block lp-block--list" data-type="list"><ul class="lp-list">${(b.items||[]).map(i=>`<li>${esc(i)}</li>`).join('')}</ul></section>`,
  image:b=>`<section class="lp-block lp-block--image" data-type="image"><figure class="lp-figure"><div class="lp-media"><img src="${esc(b.src)}" alt="${esc(b.alt||'')}" loading="lazy"/></div>${b.caption?`<figcaption class="lp-caption">${esc(b.caption)}</figcaption>`:''}</figure></section>`,
  video:b=>`<section class="lp-block lp-block--video" data-type="video"><div class="lp-block-label">${BLOCK_LABELS.video}</div><div class="lp-video"><img class="lp-video-poster" src="${esc(b.poster)}" alt=""/><button type="button" class="lp-video-play" aria-label="Воспроизвести">▶</button><div class="lp-video-meta"><span class="lp-video-title">${esc(b.title||'Видео')}</span><span class="lp-video-dur">${esc(b.duration||'')}</span></div></div></section>`,
+ audio:b=>`<section class="lp-block lp-block--audio" data-type="audio"><div class="lp-block-label">${BLOCK_LABELS.audio}</div><div class="lp-audio"><div class="lp-audio-cover"${b.cover?` style="background-image:url('${esc(b.cover)}')"`:'')} aria-hidden="true"></div><div class="lp-audio-body"><p class="lp-audio-title">${esc(b.title||'Аудио')}</p><div class="lp-audio-player"><button type="button" class="lp-audio-play" aria-label="Воспроизвести">▶</button><div class="lp-audio-track"><div class="lp-audio-wave"></div><div class="lp-audio-prog"><span style="width:28%"></span></div></div><span class="lp-audio-time"><span class="lp-audio-current">${esc(b.current||'0:00')}</span> / ${esc(b.duration||'0:00')}</span></div>${b.caption?`<p class="lp-audio-caption">${esc(b.caption)}</p>`:''}</div></div></section>`,
  file:b=>`<section class="lp-block lp-block--file" data-type="file"><div class="lp-block-label">${BLOCK_LABELS.file}</div><a class="lp-file" href="#" onclick="return false"><span class="lp-file-icon" aria-hidden="true">📄</span><span class="lp-file-body"><span class="lp-file-name">${esc(b.name)}</span><span class="lp-file-meta">${esc(b.size)}${b.meta?` • ${esc(b.meta)}`:''}</span></span><span class="lp-file-dl">Скачать</span></a></section>`,
  info:b=>`<section class="lp-block lp-block--info" data-type="info"><div class="lp-info"><span class="lp-info-icon" aria-hidden="true">!</span><p>${esc(b.text)}</p></div></section>`,
  steps:b=>`<section class="lp-block lp-block--steps" data-type="steps"><div class="lp-block-label">${esc(b.title||BLOCK_LABELS.steps)}</div><ol class="lp-steps">${(b.items||[]).map((item,i)=>`<li class="lp-step"><span class="lp-step-num">${i+1}</span><span class="lp-step-text">${esc(item)}</span></li>`).join('')}</ol></section>`,
@@ -291,6 +293,14 @@ function renderMain(){
   go(next?.id||'cover');
  });
  bindMarkedImages();
+ initAudioWaves();
+}
+function initAudioWaves(){
+ document.querySelectorAll('.lp-audio-wave').forEach(wave=>{
+  if(wave.dataset.bars) return;
+  wave.dataset.bars='1';
+  for(let i=0;i<48;i++){const bar=document.createElement('span');bar.className='lp-audio-bar';bar.style.height=(10+Math.abs(Math.sin(i*.5))*28+(i%4)*3)+'px';wave.appendChild(bar);}
+ });
 }
 
 function bindTestForm(unit,id){

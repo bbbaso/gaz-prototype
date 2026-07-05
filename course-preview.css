@@ -81,6 +81,19 @@ body.lp-theme-blue{margin:0;background:var(--lp-bg);color:var(--lp-text);font-fa
 .lp-video-poster{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;opacity:.88}
 .lp-video-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border:0;border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:24px;cursor:pointer}
 .lp-video-meta{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.75));color:#fff;display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.lp-audio{background:#fff;border:1px solid var(--lp-line);border-radius:22px;padding:18px;display:grid;grid-template-columns:88px 1fr;gap:18px;box-shadow:var(--lp-shadow)}
+.lp-audio-cover{width:88px;height:88px;border-radius:18px;background:linear-gradient(135deg,#D5DCE2,#F1F5F8) center/cover no-repeat;flex:0 0 auto}
+.lp-audio-body{min-width:0;display:flex;flex-direction:column;gap:12px}
+.lp-audio-title{margin:0;font-size:15px;line-height:1.4;font-weight:400}
+.lp-audio-player{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.lp-audio-play{width:44px;height:44px;border:0;border-radius:50%;background:#111;color:#fff;font-size:16px;cursor:pointer;flex:0 0 auto}
+.lp-audio-track{min-width:0;display:flex;flex-direction:column;gap:8px}
+.lp-audio-wave{display:flex;align-items:flex-end;gap:3px;height:36px;overflow:hidden}
+.lp-audio-bar{width:4px;border-radius:999px;background:var(--lp-accent);opacity:.55;flex:0 0 auto}
+.lp-audio-prog{height:4px;background:var(--lp-soft);border-radius:999px;overflow:hidden}
+.lp-audio-prog span{display:block;height:100%;background:var(--lp-accent);border-radius:999px}
+.lp-audio-time{font-size:12px;color:var(--lp-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lp-audio-caption{margin:0;font-size:12px;color:var(--lp-muted);line-height:1.45}
 .lp-file{display:flex;align-items:center;gap:14px;padding:16px 18px;background:#fff;border:1px solid var(--lp-line);border-radius:18px;text-decoration:none;color:inherit;box-shadow:var(--lp-shadow)}
 .lp-file-icon{font-size:28px;line-height:1}
 .lp-file-body{flex:1;min-width:0}
