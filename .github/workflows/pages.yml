@@ -22,7 +22,7 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p public
-          cp prototype.html index.html app.js styles.css public/
+          cp prototype.html index.html app.js styles.css course-preview.html course-preview.css course-preview.js public/
           cp -r assets public/
           touch public/.nojekyll
 

@@ -789,6 +789,208 @@ document.getElementById('commentPins')?.addEventListener('click',e=>{
  if(thread){thread.classList.add('is-highlight');thread.scrollIntoView({behavior:'smooth',block:'nearest'});}
 });
 document.addEventListener('input',e=>{if(e.target.classList.contains('speed')){const box=e.target.closest('.sec');const val=box.querySelector('.speed-val');if(val)val.textContent=Number(e.target.value).toFixed(1)+'x'}});
+document.querySelector('.preview-btn')?.addEventListener('click',()=>{window.open('course-preview.html','_blank','noopener');});
 
 setTimeout(()=>{document.querySelectorAll('.material-nav').forEach((btn)=>{const idx=Number(btn.dataset.index||0)+1;const thumb=btn.querySelector('.thumb');if(thumb&&!btn.classList.contains('inline-test-nav')) thumb.textContent=idx;});},0);
 initCollabUi();
+initInspectMode();
+
+const INSPECT_RULES=[
+ // —— атомы (самый высокий приоритет на узле) ——
+ {sel:'.thumb',name:'NavItem / Thumb',hint:'Превью: номер, обложка или ◎'},
+ {sel:'.it',name:'NavItem / Title',hint:''},
+ {sel:'.im',name:'NavItem / Meta',hint:'«3 блока • 4 мин»'},
+ {sel:'.inline-test-thumb',name:'NavItem / TestThumb',hint:''},
+ {sel:'.cover-icon',name:'NavItem / CoverIcon',hint:''},
+ {sel:'.pill',name:'Pill',hint:''},
+ {sel:'.ai-pill',name:'Pill / AI',hint:''},
+ {sel:'.badge',name:'Badge / Draft',hint:''},
+ {sel:'.label',name:'Label',hint:''},
+ {sel:'.hint',name:'Text / Hint',hint:''},
+ {sel:'.eye',name:'Eyebrow',hint:'Серый kicker над заголовком'},
+ {sel:'.ghost',name:'Button / Ghost',hint:''},
+ {sel:'.ai-orb',name:'Icon / AI',hint:''},
+ {sel:'.block-icon',name:'BlockTile / Icon',hint:''},
+ {sel:'.block-icon-text',name:'BlockTile / IconText',hint:''},
+ {sel:'.toggle',name:'Toggle',hint:''},
+ {sel:'.select',name:'Select / Trigger',hint:''},
+ {sel:'.dropdown',name:'Select / Dropdown',hint:''},
+ {sel:'.dropdown div',name:'Select / Option',hint:''},
+ {sel:'.field',name:'Field',hint:'Input или textarea'},
+ {sel:'.tool',name:'Toolbar / Tool',hint:''},
+ {sel:'.ans',name:'Test / AnswerOption',hint:''},
+ {sel:'.q-type',name:'Test / QuestionType',hint:''},
+ {sel:'.chapter-seg',name:'Podcast / ChapterSegment',hint:''},
+ {sel:'.podcast-playhead',name:'Podcast / Playhead',hint:''},
+ {sel:'.podcast-marker',name:'Podcast / TimeMarker',hint:''},
+ {sel:'.bar',name:'Podcast / WaveBar',hint:''},
+ {sel:'.bi',name:'Content / BulletIndex',hint:''},
+ {sel:'.collab-avatar',name:'Avatar',hint:''},
+ {sel:'.collab-tab',name:'Collab / Tab',hint:''},
+ {sel:'.course-color-dot',name:'Course / ColorDot',hint:''},
+ {sel:'.course-layout-btn',name:'Course / LayoutBtn',hint:''},
+ {sel:'.dot',name:'ColorDot',hint:''},
+ {sel:'.sw',name:'DemoRemote / ModePill',hint:''},
+ {sel:'.in-tab',name:'PanelTabs / Tab',hint:''},
+ {sel:'.play-big',name:'Video / PlayButton',hint:''},
+ {sel:'.player-play',name:'Video / PlaySmall',hint:''},
+ {sel:'.comment-pin',name:'Collab / CommentPin',hint:''},
+ // —— кнопки (до общего .btn) ——
+ {sel:'.collab-comments-btn',name:'Button / Comments',hint:''},
+ {sel:'.left-add-inline-test',name:'Button / AddInlineTest',hint:''},
+ {sel:'.left-add-btn',name:'Button / AddStructureItem',hint:''},
+ {sel:'.ai-btn',name:'Button / AI',hint:'Градиентная AI-кнопка'},
+ {sel:'.cover-ai-btn',name:'Button / AIImprove',hint:''},
+ {sel:'.demo-remote-trigger',name:'DemoRemote / Trigger',hint:''},
+ {sel:'.inspect-toggle',name:'Inspect / Toggle',hint:''},
+ {sel:'.btn',name:'Button',hint:''},
+ // —— навигация и структура ——
+ {sel:'.cover-nav',name:'NavItem / Cover',hint:'Обложка или «Обложка и оформление»'},
+ {sel:'.inline-test-nav',name:'NavItem / InlineTest',hint:'Промежуточный тест между разделами'},
+ {sel:'.material-nav',name:'NavItem / Structure',hint:'Сцена, глава, раздел или урок'},
+ {sel:'.test-entry',name:'TestEntry / Final',hint:'Итоговый тест в структуре'},
+ {sel:'.topline',name:'TestEntry / Header',hint:''},
+ {sel:'.left-title',name:'Left / Title',hint:'«Структура»'},
+ {sel:'.section-kicker',name:'Left / SectionKicker',hint:''},
+ {sel:'.list',name:'Left / List',hint:''},
+ {sel:'.left-section',name:'Left / Section',hint:'Секция с kicker и списком'},
+ // —— правая панель ——
+ {sel:'.rt',name:'Right / Header',hint:'«Панель настроек»'},
+ {sel:'.course-color-dots',name:'Course / ColorPalette',hint:''},
+ {sel:'.course-layout-toggle',name:'Course / LayoutToggle',hint:''},
+ {sel:'.course-required-row',name:'Course / RequiredRow',hint:''},
+ {sel:'.avatar-row',name:'Right / AvatarRow',hint:'Аватар ведущего (видео)'},
+ {sel:'.avatar-pic',name:'Right / AvatarPhoto',hint:''},
+ {sel:'.speed-row',name:'Right / SpeedSlider',hint:''},
+ {sel:'.trow',name:'Right / ToggleRow',hint:'Строка с переключателем'},
+ {sel:'.select-wrap',name:'Select',hint:''},
+ {sel:'.sec',name:'Right / Section',hint:''},
+ {sel:'.block',name:'BlockTile',hint:'Плитка типа контента'},
+ {sel:'.blocks-extended',name:'BlocksGrid / Extended',hint:'Расширенная палитра блоков'},
+ {sel:'.blocks',name:'BlocksGrid',hint:'Сетка 2×N плиток'},
+ {sel:'.course-right-theme',name:'RightPanel / CourseTheme',hint:'Тема курса — на обложке'},
+ {sel:'.course-right-lesson',name:'RightPanel / CourseLesson',hint:'Настройки урока'},
+ {sel:'.course-right-blocks',name:'RightPanel / CourseBlocks',hint:'Сетка блоков на уроке'},
+ {sel:'.test-right',name:'RightPanel / Test',hint:'Настройки теста'},
+ // —— центр: тест ——
+ {sel:'.q-card',name:'Test / QuestionCard',hint:''},
+ {sel:'.q-head',name:'Test / QuestionHeader',hint:''},
+ {sel:'.setting-card',name:'Test / SettingCard',hint:''},
+ {sel:'.test-settings',name:'Test / SettingsRow',hint:'4 карточки настроек'},
+ {sel:'.ai-box',name:'Test / AIBox',hint:''},
+ {sel:'.test-hero',name:'Test / Hero',hint:'Заголовок + AI-бокс'},
+ // —— центр: документ ——
+ {sel:'.doc-section-title',name:'DocBlock / H2',hint:''},
+ {sel:'.doc-subheading',name:'DocBlock / H3',hint:''},
+ {sel:'.doc-list',name:'DocBlock / List',hint:''},
+ {sel:'.doc-steps',name:'DocBlock / Steps',hint:''},
+ {sel:'.doc-figure',name:'DocBlock / Image',hint:''},
+ {sel:'.doc-image',name:'DocBlock / ImageFrame',hint:''},
+ {sel:'.info',name:'DocBlock / Info',hint:'Важный блок / callout'},
+ {sel:'.theme-panel',name:'Doc / ThemePanel',hint:'Тема блока (лонгрид)'},
+ {sel:'.toolbar',name:'Doc / Toolbar',hint:'Форматирование + AI'},
+ {sel:'.doc',name:'Doc / Body',hint:'Тело раздела / урока'},
+ {sel:'.section-heading',name:'Doc / SectionHeading',hint:''},
+ {sel:'.section-kicker-label',name:'Doc / SectionKicker',hint:''},
+ // —— центр: видео ——
+ {sel:'.slide-player',name:'Video / MiniPlayer',hint:'Прогресс слайда'},
+ {sel:'.slide-inner',name:'Video / SlideContent',hint:''},
+ {sel:'.video-photo',name:'Video / AvatarPhoto',hint:''},
+ {sel:'.avatar-zone',name:'Video / AvatarZone',hint:'Фото ведущего'},
+ {sel:'.slide',name:'Video / Slide',hint:'Текстовая часть слайда'},
+ {sel:'.video-text-panel',name:'Video / TextPanel',hint:'Редактор текста слайда'},
+ {sel:'.video-scripts',name:'Video / Scripts',hint:'Сценарий по таймкодам'},
+ {sel:'.video-theses',name:'Video / ThesesList',hint:''},
+ {sel:'.video',name:'Center / VideoPlayer',hint:'Плеер 16:9'},
+ // —— центр: подкаст ——
+ {sel:'.podcast-chapters-edit',name:'Podcast / ChaptersEdit',hint:''},
+ {sel:'.podcast-scripts',name:'Podcast / Scripts',hint:''},
+ {sel:'.podcast-chapters-bar',name:'Podcast / ChapterBar',hint:''},
+ {sel:'.podcast-marker-row',name:'Podcast / MarkerRow',hint:''},
+ {sel:'.podcast-wave-outer',name:'Podcast / WaveTrack',hint:''},
+ {sel:'.podcast-timeline',name:'Podcast / Timeline',hint:'Волна + главы + playhead'},
+ {sel:'.podcast-header',name:'Podcast / Header',hint:''},
+ {sel:'.audio',name:'Center / PodcastCard',hint:'Карточка подкаста'},
+ // —— центр: обложка и редактор ——
+ {sel:'.cover-photo-actions',name:'Cover / PhotoActions',hint:''},
+ {sel:'.cover-photo-zone',name:'Cover / PhotoZone',hint:''},
+ {sel:'.cover-copy',name:'Cover / Copy',hint:''},
+ {sel:'.cover-fields',name:'Cover / Fields',hint:''},
+ {sel:'.cover-editor-layout',name:'Cover / PreviewLayout',hint:''},
+ {sel:'.cover-editor-card',name:'Cover / PreviewCard',hint:''},
+ {sel:'.cover-fields-card',name:'Cover / FieldsCard',hint:''},
+ {sel:'.panel-tabs',name:'PanelTabs',hint:'Табы под контентом'},
+ {sel:'.body',name:'Panel / Body',hint:'Контент под табами'},
+ {sel:'.script',name:'ScriptRow',hint:'Строка сценария'},
+ {sel:'.minirow',name:'Minirow',hint:'Компактная строка ввода'},
+ {sel:'.big',name:'Content / Heading',hint:''},
+ {sel:'.content-heading',name:'Content / Heading',hint:''},
+ {sel:'.content-text',name:'Content / Text',hint:''},
+ {sel:'.unified-text-editor .cover',name:'Doc / CoverBand',hint:'Верхняя полоса с заголовком'},
+ {sel:'.unified-text-editor',name:'Center / DocEditor',hint:'Лонгрид и курс'},
+ {sel:'.cover-area',name:'Center / CoverEditor',hint:'Редактор обложки'},
+ {sel:'.test-area',name:'Center / TestEditor',hint:'Редактор теста'},
+ {sel:'.material-area',name:'Center / Content',hint:'Основной контент материала'},
+ // —— коллаб и демо ——
+ {sel:'.collab-compose',name:'Collab / Compose',hint:''},
+ {sel:'.collab-threads',name:'Collab / Threads',hint:''},
+ {sel:'.collab-thread',name:'Collab / Thread',hint:'Тред комментария или задачи'},
+ {sel:'.collab-panel-head',name:'Collab / PanelHead',hint:''},
+ {sel:'.collab-panel-tabs',name:'Collab / Tabs',hint:''},
+ {sel:'.collab-panel',name:'Overlay / CollabPanel',hint:'Панель комментариев'},
+ {sel:'.collab-avatars',name:'Header / AvatarStack',hint:''},
+ {sel:'.collab-bar',name:'Header / CollabBar',hint:'Аватары + кнопка «Комментарии»'},
+ {sel:'.demo-remote-panel',name:'Overlay / DemoRemotePanel',hint:''},
+ {sel:'.demo-remote',name:'Overlay / DemoRemote',hint:'Переключатель режимов демо'},
+ {sel:'.saved',name:'Header / SavedStatus',hint:''},
+ {sel:'.top',name:'Header / TopBar',hint:'Уже в Figma — не переносить'},
+ // —— карточки и контейнеры (последними) ——
+ {sel:'.card',name:'Card',hint:'Белая карточка с тенью'},
+ {sel:'.left',name:'Panel / Left',hint:'Левая колонка 330px — только пустые отступы'},
+ {sel:'.right',name:'Panel / Right',hint:'Правая колонка 360px — только пустые отступы'},
+ {sel:'.main',name:'Area / Main',hint:'Центральная область — только пустые отступы'},
+ {sel:'.layout',name:'Layout / 3Column',hint:'330 | flex | 360'}
+];
+function resolveInspectTarget(el){
+ if(!el||el===document.body||el===document.documentElement) return null;
+ if(el.closest('#inspectToggle,#inspectTooltip')) return null;
+ let node=el;
+ while(node&&node!==document.body){
+  for(const rule of INSPECT_RULES){
+   if(node.matches?.(rule.sel)) return {el:node,name:rule.name,hint:rule.hint};
+  }
+  node=node.parentElement;
+ }
+ return null;
+}
+function initInspectMode(){
+ const toggle=document.getElementById('inspectToggle');
+ const tip=document.getElementById('inspectTooltip');
+ if(!toggle||!tip) return;
+ let active=null;
+ const setOn=on=>{
+  document.body.classList.toggle('inspect-mode',on);
+  toggle.classList.toggle('on',on);
+  toggle.setAttribute('aria-pressed',on?'true':'false');
+  if(!on){active?.classList.remove('inspect-highlight');active=null;tip.classList.add('hidden');}
+ };
+ setOn(true);
+ toggle.addEventListener('click',()=>setOn(!document.body.classList.contains('inspect-mode')));
+ document.addEventListener('mousemove',e=>{
+  if(!document.body.classList.contains('inspect-mode')) return;
+  const hit=resolveInspectTarget(e.target);
+  if(!hit){active?.classList.remove('inspect-highlight');active=null;tip.classList.add('hidden');return;}
+  if(active!==hit.el){active?.classList.remove('inspect-highlight');active=hit.el;active.classList.add('inspect-highlight');}
+  tip.innerHTML=`<b>${hit.name}</b>${hit.hint?`<span>${hit.hint}</span>`:''}`;
+  tip.classList.remove('hidden');
+  const pad=14;
+  let x=e.clientX+pad;
+  let y=e.clientY+pad;
+  const rect=tip.getBoundingClientRect();
+  if(x+rect.width>window.innerWidth-8) x=e.clientX-rect.width-pad;
+  if(y+rect.height>window.innerHeight-8) y=e.clientY-rect.height-pad;
+  tip.style.left=`${Math.max(8,x)}px`;
+  tip.style.top=`${Math.max(8,y)}px`;
+ });
+ document.addEventListener('mouseleave',()=>{active?.classList.remove('inspect-highlight');active=null;tip.classList.add('hidden');});
+}

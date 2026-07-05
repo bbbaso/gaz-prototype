@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Превью курса — ученик</title>
+<link rel="stylesheet" href="course-preview.css?v=3"/>
+</head>
+<body class="lp-theme-blue">
+<header class="lp-top">
+  <div class="lp-top-left">
+    <button type="button" class="lp-exit" id="lpExit" aria-label="Выйти из превью">← Редактор</button>
+    <div class="lp-top-title">
+      <span class="lp-top-kicker">Превью для ученика</span>
+      <h1 id="lpCourseTitle">Курс</h1>
+    </div>
+  </div>
+  <div class="lp-top-progress">
+    <span class="lp-progress-label" id="lpProgressLabel">0%</span>
+    <div class="lp-progress-track"><div class="lp-progress-bar" id="lpProgress"></div></div>
+  </div>
+</header>
+<div class="lp-shell">
+  <aside class="lp-sidebar" aria-label="Структура курса">
+    <p class="lp-sidebar-kicker">Содержание</p>
+    <nav class="lp-nav" id="lpNavList"></nav>
+  </aside>
+  <main class="lp-main" id="lpMain"></main>
+</div>
+<script src="course-preview.js?v=3"></script>
+</body>
+</html>
