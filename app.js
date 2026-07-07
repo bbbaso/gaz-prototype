@@ -789,7 +789,7 @@ document.getElementById('commentPins')?.addEventListener('click',e=>{
  if(thread){thread.classList.add('is-highlight');thread.scrollIntoView({behavior:'smooth',block:'nearest'});}
 });
 document.addEventListener('input',e=>{if(e.target.classList.contains('speed')){const box=e.target.closest('.sec');const val=box.querySelector('.speed-val');if(val)val.textContent=Number(e.target.value).toFixed(1)+'x'}});
-document.querySelector('.preview-btn')?.addEventListener('click',()=>{window.open('course-preview.html','_blank','noopener');});
+document.querySelector('.preview-btn')?.addEventListener('click',()=>{window.location.href='course-preview.html';});
 
 setTimeout(()=>{document.querySelectorAll('.material-nav').forEach((btn)=>{const idx=Number(btn.dataset.index||0)+1;const thumb=btn.querySelector('.thumb');if(thumb&&!btn.classList.contains('inline-test-nav')) thumb.textContent=idx;});},0);
 initCollabUi();

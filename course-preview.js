@@ -368,7 +368,7 @@ function initCoursePreview(){
   if(!btn||btn.disabled) return;
   go(btn.dataset.nav);
  });
- document.getElementById('lpExit')?.addEventListener('click',()=>{window.close();window.location.href='prototype.html';});
+ document.getElementById('lpExit')?.addEventListener('click',()=>{window.location.href='prototype.html';});
  renderMain();
  updateProgressUi();
 }
