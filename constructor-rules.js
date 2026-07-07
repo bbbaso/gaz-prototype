@@ -31,7 +31,7 @@ function renderMatrix() {
   const table = document.getElementById('matrixTable');
   if (!table) return;
 
-  const head = `<thead><tr><th>После ↓</th>${MATRIX_LABELS.map(l => `<th>${l}</th>`).join('')}</tr></thead>`;
+  const head = `<thead><tr><th>Уже стоит ↓ / Добавляем →</th>${MATRIX_LABELS.map(l => `<th>${l}</th>`).join('')}</tr></thead>`;
   const body = MATRIX.map((row, i) => {
     const cells = row.map(v => `<td>${PILL[v]}</td>`).join('');
     return `<tr><th>${MATRIX_LABELS[i]}</th>${cells}</tr>`;

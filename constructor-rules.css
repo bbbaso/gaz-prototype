@@ -325,6 +325,35 @@ table.cr-table {
 
 .cr-card li { margin-bottom: 4px; }
 
+.cr-example {
+  background: var(--cr-soft);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.cr-example-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cr-example ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.cr-example li { margin-bottom: 6px; }
+
+.cr-example-sample {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--cr-text);
+}
+
 .cr-pattern {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;

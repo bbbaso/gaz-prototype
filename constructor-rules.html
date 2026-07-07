@@ -29,9 +29,6 @@
     <a href="#matrix">Матрица соседства</a>
     <a href="#patterns">Шаблоны порядка</a>
     <a href="#limits">Лимиты урока</a>
-    <a href="#insert">Добавление блоков</a>
-    <a href="#modes">Курс vs лонгрид</a>
-    <a href="#audio">Аудио (будущее)</a>
   </nav>
 
   <main class="cr-main">
@@ -136,8 +133,24 @@
     </section>
 
     <section class="cr-section" id="matrix">
-      <h2>3. Матрица соседства</h2>
-      <p class="cr-lead">Строка — что уже стоит. Столбец — что добавляем после. <span class="cr-pill cr-pill--ok">✓</span> можно · <span class="cr-pill cr-pill--warn">!</span> не рекомендуется · <span class="cr-pill cr-pill--no">✕</span> запретить / предупредить</p>
+      <h2>3. Можно ли ставить блоки рядом?</h2>
+      <p class="cr-lead">Эта таблица отвечает на простой вопрос: <strong>если один блок уже стоит в уроке, можно ли сразу после него поставить другой?</strong></p>
+
+      <div class="cr-example">
+        <p class="cr-example-title">Как читать таблицу</p>
+        <ol>
+          <li>Найдите в <strong>левом столбце</strong> блок, который уже есть в уроке.</li>
+          <li>Посмотрите на пересечение с <strong>верхней строкой</strong> — какой блок хотите добавить следом.</li>
+          <li>Оцените отметку в ячейке.</li>
+        </ol>
+        <p class="cr-example-sample">Пример: после <strong>«Абзац»</strong> можно поставить <strong>«Видео»</strong> — в строке «Текст» на пересечении со столбцом «Видео» стоит <span class="cr-pill cr-pill--ok">✓</span>. А вот после <strong>«Видео»</strong> сразу ещё одно <strong>«Видео»</strong> — <span class="cr-pill cr-pill--no">✕</span>: конструктор должен предупредить.</p>
+      </div>
+
+      <p class="cr-lead">
+        <span class="cr-pill cr-pill--ok">✓</span> можно без предупреждения ·
+        <span class="cr-pill cr-pill--warn">!</span> можно, но показать подсказку ·
+        <span class="cr-pill cr-pill--no">✕</span> лучше запретить или сильно предупредить
+      </p>
       <div class="cr-table-wrap">
         <table class="cr-table cr-matrix" id="matrixTable"></table>
       </div>
@@ -190,61 +203,6 @@
             <tr><td>Блок-схема</td><td>max 1</td><td>Блокировка второго</td></tr>
             <tr><td>Медиа подряд</td><td>max 2</td><td>«Добавьте текст между»</td></tr>
             <tr><td>H2 подряд</td><td>разрешено</td><td>«Объединить в один раздел?»</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="cr-section" id="insert">
-      <h2>6. Поведение при добавлении</h2>
-      <div class="cr-table-wrap">
-        <table class="cr-table">
-          <thead>
-            <tr><th>Ситуация</th><th>Поведение</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Ничего не выбрано</td><td>Блок в <strong>конец</strong> урока</td></tr>
-            <tr><td>Выбран блок</td><td>Новый блок <strong>после</strong> выбранного</td></tr>
-            <tr><td>Клик «+» между блоками</td><td>Вставка <strong>в эту позицию</strong></td></tr>
-            <tr><td>Урок пустой</td><td>Предложить первый блок <strong>H2</strong></td></tr>
-            <tr><td>Второй глоссарий</td><td>Предупреждение + редактировать существующий</td></tr>
-            <tr><td>H3 без H2 в уроке</td><td>«Сначала добавьте заголовок раздела»</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="cr-section" id="modes">
-      <h2>7. Курс vs лонгрид</h2>
-      <div class="cr-table-wrap">
-        <table class="cr-table">
-          <thead>
-            <tr><th>Правило</th><th>Курс</th><th>Лонгрид</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Набор блоков</td><td>Одинаковый</td><td>Одинаковый</td></tr>
-            <tr><td>Обложка раздела</td><td>Есть</td><td>Упрощённая</td></tr>
-            <tr><td>Обязательность</td><td>Флаг «обязательный»</td><td>Нет</td></tr>
-            <tr><td>Тесты между разделами</td><td>Да</td><td>Да</td></tr>
-            <tr><td>Лимит блоков</td><td>Базовый</td><td>+20% мягче</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="cr-section" id="audio">
-      <h2>8. Аудио (будущее)</h2>
-      <p class="cr-lead">В палитре пока нет, но правила лучше зафиксировать заранее.</p>
-      <div class="cr-table-wrap">
-        <table class="cr-table">
-          <thead>
-            <tr><th>Правило</th><th>Решение</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Позиция</td><td>Как у видео: после контекста</td></tr>
-            <tr><td>Лимит</td><td>max 2 на урок</td></tr>
-            <tr><td>Подряд с видео</td><td>Предупреждение</td></tr>
-            <tr><td>Обязательные поля</td><td>Название + длительность + обложка (опц.)</td></tr>
           </tbody>
         </table>
       </div>
