@@ -358,7 +358,7 @@ function openTestEditor(sec,type,{finalTest=false,inlineId=null}={}){
 function initCollabUi(){
  const threads=document.getElementById('collabThreads');
  const pins=document.getElementById('commentPins');
- if(threads) threads.innerHTML=COLLAB_COMMENTS.map(c=>`<article class="collab-thread${c.resolved?' is-resolved':''}${c.task?' is-task':''}" data-comment-id="${c.id}"><div class="collab-thread-head"><span class="collab-avatar sm" style="background:${c.color}">${c.initials}</span><div><b>${c.author}</b><span class="hint">${c.time}</span></div>${c.task?'<span class="pill collab-task-pill">Задача</span>':''}</div><p>${c.text}</p><div class="collab-thread-actions"><button type="button" class="ghost">Ответить</button>${c.resolved?'<span class="hint">Решено</span>':'<button type="button" class="ghost">Отметить решённым</button>'}</div></article>`).join('');
+ if(threads) threads.innerHTML=COLLAB_COMMENTS.map(c=>`<article class="collab-thread${c.resolved?' is-resolved':''}" data-comment-id="${c.id}"><div class="collab-thread-head"><span class="collab-avatar sm" style="background:${c.color}">${c.initials}</span><div><b>${c.author}</b><span class="hint">${c.time}</span></div></div><p>${c.text}</p><div class="collab-thread-actions"><button type="button" class="ghost">Ответить</button></div></article>`).join('');
  if(pins) pins.innerHTML=COLLAB_COMMENTS.filter(c=>!c.resolved).map(c=>`<button type="button" class="comment-pin" style="top:${c.pinTop};left:${c.pinLeft}" data-comment="${c.id}" aria-label="Комментарий ${c.id}">${c.id}</button>`).join('');
 }
 const COURSE_THEME_COLORS=[

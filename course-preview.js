@@ -2,7 +2,7 @@ const COURSE_PREVIEW={
  title:'Курс: опасности на производстве',
  description:'Последовательное обучение для операторов и мастеров: от введения до практик защиты и профилактики на рабочем месте.',
  coverPhoto:'assets/image 541.jpg',
- theme:'blue',
+ theme:'purple',
  lessons:[
   {
    id:'l1',title:'Введение',kicker:'Урок 1',duration:'5 мин',required:true,
@@ -125,8 +125,11 @@ const blockRenderers={
  },
  file:b=>`<section class="lp-block lp-block--file" data-type="file"><div class="lp-block-label">${BLOCK_LABELS.file}</div><a class="lp-file" href="#" onclick="return false"><span class="lp-file-icon" aria-hidden="true">📄</span><span class="lp-file-body"><span class="lp-file-name">${esc(b.name)}</span><span class="lp-file-meta">${esc(b.size)}${b.meta?` • ${esc(b.meta)}`:''}</span></span><span class="lp-file-dl">Скачать</span></a></section>`,
  info:b=>`<section class="lp-block lp-block--info" data-type="info"><div class="lp-info"><span class="lp-info-icon" aria-hidden="true">!</span><p>${esc(b.text)}</p></div></section>`,
- steps:b=>`<section class="lp-block lp-block--steps" data-type="steps"><div class="lp-block-label">${esc(b.title||BLOCK_LABELS.steps)}</div><ol class="lp-steps">${(b.items||[]).map((item,i)=>`<li class="lp-step"><span class="lp-step-num">${i+1}</span><span class="lp-step-text">${esc(item)}</span></li>`).join('')}</ol></section>`,
- timeline:b=>`<section class="lp-block lp-block--timeline" data-type="timeline"><div class="lp-block-label">${esc(b.title||BLOCK_LABELS.timeline)}</div><div class="lp-timeline">${(b.items||[]).map(item=>`<div class="lp-tl-item"><time class="lp-tl-time">${esc(item.time)}</time><p class="lp-tl-text">${esc(item.text)}</p></div>`).join('')}</div></section>`,
+ steps:b=>{
+  const items=(b.items||[]).map(item=>typeof item==='string'?{text:item}:item);
+  return `<section class="lp-block lp-block--steps" data-type="steps">${b.title?`<div class="lp-block-label">${esc(b.title)}</div>`:''}<ol class="lp-steps">${items.map((item,i)=>`<li class="lp-step"><span class="lp-step-badge">ШАГ ${i+1}</span><div class="lp-step-card">${item.title?`<h3 class="lp-step-title">${esc(item.title)}</h3>`:''}<p class="lp-step-text">${esc(item.text)}</p></div></li>`).join('')}</ol></section>`;
+ },
+ timeline:b=>`<section class="lp-block lp-block--timeline" data-type="timeline">${b.title?`<div class="lp-block-label">${esc(b.title)}</div>`:''}<div class="lp-timeline">${(b.items||[]).map((item,i)=>{const side=i%2===0?'right':'left';return `<div class="lp-tl-item lp-tl-item--${side}"><div class="lp-tl-card">${item.time?`<time class="lp-tl-time">${esc(item.time)}</time>`:''}<p class="lp-tl-text">${esc(item.text)}</p></div><div class="lp-tl-marker" aria-hidden="true">${i+1}</div></div>`;}).join('')}</div></section>`,
  glossary:b=>`<section class="lp-block lp-block--glossary" data-type="glossary"><div class="lp-block-label">${esc(b.title||BLOCK_LABELS.glossary)}</div><dl class="lp-glossary">${(b.items||[]).map(item=>`<div class="lp-glossary-row"><dt>${esc(item.term)}</dt><dd>${esc(item.def)}</dd></div>`).join('')}</dl></section>`,
  markedImage:b=>`<section class="lp-block lp-block--marked" data-type="markedImage"><div class="lp-block-label">${BLOCK_LABELS.markedImage}</div><figure class="lp-figure lp-figure--marked"><div class="lp-marked-wrap"><img src="${esc(b.src)}" alt="${esc(b.alt||'')}" loading="lazy"/>${(b.markers||[]).map(m=>`<button type="button" class="lp-marker" style="top:${m.top};left:${m.left}" data-tip="${esc(m.text)}" aria-label="${esc(m.text)}"><span>${esc(m.label)}</span></button>`).join('')}</div>${b.caption?`<figcaption class="lp-caption">${esc(b.caption)}</figcaption>`:''}</figure></section>`,
  table:b=>`<section class="lp-block lp-block--table" data-type="table"><div class="lp-block-label">${esc(b.title||BLOCK_LABELS.table)}</div><div class="lp-table-wrap"><table class="lp-table"><thead><tr>${(b.headers||[]).map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${(b.rows||[]).map(row=>`<tr>${row.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`,
@@ -221,26 +224,29 @@ function matchRightOptions(pairs){
 function renderMatchQuestion(q,qi){
  const rights=matchRightOptions(q.pairs);
  const opts=rights.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
- return `<fieldset class="lp-q lp-q--match" data-q="${qi}"><legend class="lp-q-title">${qi+1}. ${esc(q.q)}<span class="lp-q-type">Сопоставление</span></legend><div class="lp-match">${(q.pairs||[]).map((pair,pi)=>{
+ return `<div class="lp-q lp-q--match" data-q="${qi}" role="group"><p class="lp-q-title">${qi+1}. ${esc(q.q)} <span class="lp-q-type">Сопоставление</span></p><div class="lp-match">${(q.pairs||[]).map((pair,pi)=>{
   const mark=`<span class="lp-match-mark" title="верный: ${esc(pair.right)}"><span class="lp-opt-mark" aria-hidden="true">●</span><span class="lp-match-ans">${esc(pair.right)}</span></span>`;
   return `<div class="lp-match-row"><span class="lp-match-left">${esc(pair.left)}</span><span class="lp-match-arrow" aria-hidden="true">→</span><select class="lp-match-select" name="q${qi}_${pi}" required><option value="">Выберите ответ</option>${opts}</select>${mark}</div>`;
- }).join('')}</div></fieldset>`;
+ }).join('')}</div></div>`;
 }
 function renderChoiceQuestion(q,qi){
- return `<fieldset class="lp-q" data-q="${qi}"><legend class="lp-q-title">${qi+1}. ${esc(q.q)}</legend><div class="lp-q-options">${q.options.map((opt,oi)=>{
+ return `<div class="lp-q" data-q="${qi}" role="group"><p class="lp-q-title">${qi+1}. ${esc(q.q)}</p><div class="lp-q-options">${q.options.map((opt,oi)=>{
   const inputType=q.type==='multi'?'checkbox':'radio';
   const name=q.type==='multi'?`q${qi}[]`:`q${qi}`;
   const mark=isCorrectOption(q,oi)?'<span class="lp-opt-mark" aria-hidden="true" title="верный">●</span>':'';
   return `<label class="lp-opt"><input type="${inputType}" name="${name}" value="${oi}"/><span class="lp-opt-text">${esc(opt)}</span>${mark}</label>`;
- }).join('')}</div></fieldset>`;
+ }).join('')}</div></div>`;
 }
 function renderTest(unit,isFinal){
  const items=unit.items||[];
- return `<div class="lp-test">
-  <header class="lp-test-head"><p class="lp-kicker">${isFinal?'Итоговая проверка':'Промежуточный тест'}</p><h1 class="lp-lesson-title">${esc(unit.title)}</h1><p class="lp-test-hint">Проходной балл — ${unit.pass||80}%. Можно вернуться к уроку и повторить попытку.</p></header>
-  <form class="lp-test-form" id="testForm">${items.map((q,qi)=>q.type==='match'?renderMatchQuestion(q,qi):renderChoiceQuestion(q,qi)).join('')}<div class="lp-lesson-foot"><button type="submit" class="lp-btn lp-btn--primary">Проверить ответы</button></div></form>
-  <div class="lp-test-result hidden" id="testResult"></div>
-</div>`;
+ return `<div class="lp-test lp-plate">
+  <header class="lp-lesson-hero"><h1 class="lp-lesson-title">${esc(unit.title)}</h1><div class="lp-lesson-tags"><span>Проходной балл — ${unit.pass||80}%</span></div></header>
+  <div class="lp-plate-body">
+   <p class="lp-test-hint">${isFinal?'Итоговая проверка знаний.':'Промежуточный тест.'} Можно вернуться к уроку и повторить попытку.</p>
+   <form class="lp-test-form" id="testForm">${items.map((q,qi)=>q.type==='match'?renderMatchQuestion(q,qi):renderChoiceQuestion(q,qi)).join('')}<div class="lp-lesson-foot" id="testSubmitFoot"><button type="submit" class="lp-btn lp-btn--primary">Проверить ответы</button></div></form>
+   <div class="lp-test-result hidden" id="testResult"></div>
+  </div>
+ </div>`;
 }
 
 function scoreTest(unit,form){
@@ -268,7 +274,7 @@ function scoreTest(unit,form){
 function renderMain(){
  const root=document.getElementById('lpMain');
  if(state.view==='cover'){
-  root.innerHTML=`<div class="lp-cover"><div class="lp-cover-hero" style="background-image:url('${esc(COURSE_PREVIEW.coverPhoto)}')"><div class="lp-cover-overlay"><p class="lp-kicker">Электронный курс</p><h1 class="lp-cover-title">${esc(COURSE_PREVIEW.title)}</h1><p class="lp-cover-desc">${esc(COURSE_PREVIEW.description)}</p><button type="button" class="lp-btn lp-btn--primary" id="startCourse">Начать курс</button></div></div><div class="lp-cover-stats"><div><b>${COURSE_PREVIEW.lessons.filter(l=>l.kind!=='test').length}</b><span>уроков</span></div><div><b>${COURSE_PREVIEW.lessons.filter(l=>l.kind==='test').length+1}</b><span>тестов</span></div><div><b>~24</b><span>минут</span></div></div></div>`;
+  root.innerHTML=`<div class="lp-cover lp-plate"><header class="lp-lesson-hero lp-cover-hero" style="background-image:url('${esc(COURSE_PREVIEW.coverPhoto)}')"><div class="lp-cover-hero-inner"><p class="lp-kicker">Электронный курс</p><h1 class="lp-cover-title">${esc(COURSE_PREVIEW.title)}</h1><p class="lp-cover-desc">${esc(COURSE_PREVIEW.description)}</p><button type="button" class="lp-btn lp-btn--start" id="startCourse">Начать курс</button></div></header><div class="lp-plate-body"><div class="lp-cover-stats"><div><b>${COURSE_PREVIEW.lessons.filter(l=>l.kind!=='test').length}</b><span>уроков</span></div><div><b>${COURSE_PREVIEW.lessons.filter(l=>l.kind==='test').length+1}</b><span>тестов</span></div><div><b>~24</b><span>минут</span></div></div></div></div>`;
   document.getElementById('startCourse')?.addEventListener('click',()=>go('l1'));
   return;
  }
@@ -284,10 +290,9 @@ function renderMain(){
   bindTestForm(unit,unit.id);
   return;
  }
- root.innerHTML=`<article class="lp-lesson" data-theme="${COURSE_PREVIEW.theme}">
-  <header class="lp-lesson-hero"><p class="lp-kicker">${esc(unit.kicker)}</p><h1 class="lp-lesson-title">${esc(unit.coverTitle)}</h1><p class="lp-lesson-meta">${esc(unit.duration)}${unit.required?' • обязательный':''}</p></header>
-  <div class="lp-lesson-body">${renderBlocks(unit.blocks)}</div>
-  <footer class="lp-lesson-foot"><button type="button" class="lp-btn lp-btn--primary" id="completeLesson">Завершить урок</button></footer>
+ root.innerHTML=`<article class="lp-lesson lp-plate" data-theme="${COURSE_PREVIEW.theme}">
+  <header class="lp-lesson-hero"><h1 class="lp-lesson-title">${esc(unit.coverTitle)}</h1><div class="lp-lesson-tags"><span>${esc(unit.duration)}</span>${unit.required?'<span>Обязательный</span>':''}</div></header>
+  <div class="lp-plate-body"><div class="lp-lesson-body">${renderBlocks(unit.blocks)}</div><footer class="lp-lesson-foot"><button type="button" class="lp-btn lp-btn--primary" id="completeLesson">Завершить урок</button></footer></div>
 </article>`;
  document.getElementById('completeLesson')?.addEventListener('click',()=>{
   state.completed.add(unit.id);
@@ -299,8 +304,8 @@ function renderMain(){
  bindMarkedImages();
  initAudioWaves();
 }
-function initAudioWaves(){
- document.querySelectorAll('.lp-audio-wave').forEach(wave=>{
+function initAudioWaves(scope=document){
+ scope.querySelectorAll('.lp-audio-wave').forEach(wave=>{
   if(wave.dataset.bars) return;
   wave.dataset.bars='1';
   for(let i=0;i<48;i++){const bar=document.createElement('span');bar.className='lp-audio-bar';bar.style.height=(10+Math.abs(Math.sin(i*.5))*28+(i%4)*3)+'px';wave.appendChild(bar);}
@@ -317,6 +322,7 @@ function bindTestForm(unit,id){
   state.testScores[id]=pct;
   result.classList.remove('hidden');
   result.innerHTML=`<div class="lp-result ${pass?'is-pass':'is-fail'}"><b>${pct}%</b><p>${pass?'Отлично! Можно переходить дальше.':'Нужно набрать больше правильных ответов — вернитесь к материалу.'}</p>${pass?`<button type="button" class="lp-btn lp-btn--primary" id="testContinue">Продолжить</button>`:`<button type="button" class="lp-btn" id="testRetry">Попробовать снова</button>`}</div>`;
+  if(pass) document.getElementById('testSubmitFoot')?.classList.add('hidden');
   if(pass){
    state.completed.add(id);
    document.getElementById('testContinue')?.addEventListener('click',()=>{
@@ -325,12 +331,12 @@ function bindTestForm(unit,id){
     const next=items.slice(idx+1).find(i=>i.status!=='locked');
     go(next?.id||'cover');
    });
-  }else document.getElementById('testRetry')?.addEventListener('click',()=>{result.classList.add('hidden');form.reset();});
+  }else document.getElementById('testRetry')?.addEventListener('click',()=>{result.classList.add('hidden');document.getElementById('testSubmitFoot')?.classList.remove('hidden');form.reset();});
  });
 }
 
-function bindMarkedImages(){
- document.querySelectorAll('.lp-marker').forEach(btn=>{
+function bindMarkedImages(scope=document){
+ scope.querySelectorAll('.lp-marker').forEach(btn=>{
   btn.addEventListener('click',()=>{
    const tip=btn.dataset.tip;
    let pop=btn.querySelector('.lp-marker-tip');
@@ -345,9 +351,13 @@ function go(id){
  state.view=id;
  document.getElementById('lpNavList').innerHTML=renderNav();
  renderMain();
+ updateProgressUi();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateProgressUi(){
  document.getElementById('lpProgress').style.width=`${progressPct()}%`;
  document.getElementById('lpProgressLabel').textContent=`${progressPct()}%`;
- window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function initCoursePreview(){
@@ -360,6 +370,7 @@ function initCoursePreview(){
  });
  document.getElementById('lpExit')?.addEventListener('click',()=>{window.close();window.location.href='prototype.html';});
  renderMain();
+ updateProgressUi();
 }
 
 initCoursePreview();
