@@ -974,7 +974,7 @@ function initInspectMode(){
   toggle.setAttribute('aria-pressed',on?'true':'false');
   if(!on){active?.classList.remove('inspect-highlight');active=null;tip.classList.add('hidden');}
  };
- setOn(true);
+ setOn(false);
  toggle.addEventListener('click',()=>setOn(!document.body.classList.contains('inspect-mode')));
  document.addEventListener('mousemove',e=>{
   if(!document.body.classList.contains('inspect-mode')) return;
