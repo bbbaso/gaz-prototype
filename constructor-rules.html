@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Правила блоков конструктора — курс и лонгрид</title>
-<link rel="stylesheet" href="constructor-rules.css"/>
+<link rel="stylesheet" href="constructor-rules.css?v=3"/>
 </head>
 <body>
 <header class="cr-top">
@@ -16,7 +16,10 @@
         <h1 class="cr-title">Правила блоков конструктора</h1>
       </div>
     </div>
-    <a class="cr-back" href="prototype.html">← К прототипу</a>
+    <div class="cr-top-actions">
+      <a class="cr-back cr-back--preview is-hidden" id="crBackPreview" href="course-preview.html">← К превью</a>
+      <a class="cr-back" href="prototype.html">← К прототипу</a>
+    </div>
   </div>
 </header>
 
@@ -29,6 +32,7 @@
     <a href="#matrix">Матрица соседства</a>
     <a href="#patterns">Шаблоны порядка</a>
     <a href="#limits">Лимиты урока</a>
+    <a href="#spacing">Отступы между блоками</a>
   </nav>
 
   <main class="cr-main">
@@ -208,10 +212,100 @@
       </div>
     </section>
 
+    <section class="cr-section" id="spacing">
+      <h2>6. Отступы между блоками</h2>
+      <p class="cr-lead">Между элементами в уроке не нужна отдельная матрица «текст → фото → диаграмма». Достаточно <strong>одной шкалы отступов</strong> и нескольких явных исключений для заголовков и связанного текста.</p>
+
+      <div class="cr-example">
+        <p class="cr-example-title">Базовый принцип</p>
+        <p class="cr-example-sample">Блоки урока — это вертикальный список. Контейнер задаёт единый <strong>gap</strong> между соседями. Отступ — это ритм урока, а не свойство каждой пары типов.</p>
+        <div class="cr-pattern">.lp-lesson-body { display: flex; flex-direction: column; gap: var(--space-m); }</div>
+      </div>
+
+      <h3 class="cr-subhead">Шкала отступов (токены)</h3>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Токен</th><th>Значение</th><th>Где используется</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>--space-xs</code></td><td>12px</td><td>Внутри блока: подпись к картинке, мелкие подписи</td></tr>
+            <tr><td><code>--space-s</code></td><td>24px</td><td>Связанный текст: H3 → абзац, абзац → список</td></tr>
+            <tr><td><code>--space-m</code></td><td><strong>40px</strong></td><td><strong>Стандарт между любыми двумя блоками</strong></td></tr>
+            <tr><td><code>--space-l</code></td><td>60px</td><td>Перед новым разделом (H2), вокруг «тяжёлых» блоков</td></tr>
+            <tr><td><code>--space-xl</code></td><td>88px</td><td>Редко: крупное медиа, переход к тесту</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Категории блоков</h3>
+      <p class="cr-lead">Между категориями — тот же <code>--space-m</code>, если нет исключения ниже.</p>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Категория</th><th>Типы</th><th>Внешний отступ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Текст</td><td>H2, H3, абзац, список</td><td><code>m</code>; у H2/H3 — см. исключения</td></tr>
+            <tr><td>Медиа</td><td>изображение, видео, аудио, диаграмма, марк. изображение</td><td><code>m</code>, при необходимости <code>l</code> сверху</td></tr>
+            <tr><td>Структурные</td><td>шаги, таймлайн, таблица, блок-схема, глоссарий</td><td><code>m</code> или <code>l</code> — блок «тяжёлый»</td></tr>
+            <tr><td>Акцент</td><td>важный блок, файл</td><td>не меньше <code>m</code> сверху и снизу</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Исключения (7 правил)</h3>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Ситуация</th><th>Отступ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>H2</strong> — новый раздел</td><td>Сверху <code>l</code> (60px), кроме первого блока в уроке; до следующего блока эффект <code>s</code> (24px)</td></tr>
+            <tr><td><strong>H3</strong> — подраздел</td><td>Сверху <code>m</code>; до абзаца/списка подряд — <code>s</code></td></tr>
+            <tr><td>Связанный текст подряд</td><td>H3 → абзац, абзац → список: <code>s</code> вместо <code>m</code></td></tr>
+            <tr><td>Медиа после текста</td><td>Стандарт <code>m</code>; подпись — внутри блока (<code>xs</code>)</td></tr>
+            <tr><td>Два медиа подряд</td><td>Не уменьшать gap; лучше предупреждение в конструкторе</td></tr>
+            <tr><td>Тяжёлые и акцентные блоки</td><td>Сверху и снизу не меньше <code>m</code></td></tr>
+            <tr><td>Первый / последний блок</td><td>Без лишнего margin — отступ даёт padding плашки урока</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Чего не делать</h3>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Подход</th><th>Почему плохо</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>У каждого блока свой margin-top и margin-bottom</td><td>Схлопывание margin, разный вид в редакторе и превью</td></tr>
+            <tr><td>Матрица отступов для всех пар типов</td><td>Сотни значений, сложно поддерживать</td></tr>
+            <tr><td>Отступ зависит от ширины контента блока</td><td>Непредсказуемо для автора</td></tr>
+            <tr><td>Копировать Word (Enter = отступ)</td><td>В блочной модели нет смысла</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Спека для разработки</h3>
+      <div class="cr-pattern">DEFAULT: gap между блоками = 40px (--space-m)
+
+H2: margin-top 60px (кроме первого в уроке)
+H3 + text/list подряд: 24px между соседями
+Все остальные пары: 40px
+
+Внутренние отступы — в компоненте блока, не в gap урока
+Редактор и превью ученика — одни и те же токены</div>
+
+      <blockquote class="cr-quote" style="margin-top:20px;margin-bottom:0">
+        Для заказчика: «Между элементами везде одинаковый стандартный интервал. Чуть больше — только перед новым разделом и вокруг крупных вставок. Уменьшать отступы имеет смысл только внутри связанного текста, а не для каждой пары типов блоков».
+      </blockquote>
+    </section>
+
     <p class="cr-foot">Версия справочника · май 2026 · gaz-prototype</p>
   </main>
 </div>
 
-<script src="constructor-rules.js"></script>
+<script src="constructor-rules.js?v=2"></script>
 </body>
 </html>

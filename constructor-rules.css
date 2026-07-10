@@ -101,6 +101,26 @@ body {
 
 .cr-back:hover { background: rgba(164, 142, 213, 0.2); }
 
+.cr-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.cr-back--preview {
+  background: var(--cr-accent);
+  color: #fff;
+}
+
+.cr-back--preview:hover {
+  background: var(--cr-accent-deep);
+  color: #fff;
+}
+
+.cr-back.is-hidden { display: none; }
+
 .cr-layout {
   max-width: calc(var(--cr-max) + var(--cr-sidebar) + 48px);
   margin: 0 auto;
@@ -218,6 +238,21 @@ body {
   color: var(--cr-muted);
   font-size: 14px;
   line-height: 1.55;
+}
+
+.cr-subhead {
+  margin: 22px 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.cr-table code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  background: var(--cr-soft);
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 
 .cr-table-wrap {

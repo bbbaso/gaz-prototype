@@ -369,6 +369,15 @@ function initCoursePreview(){
   go(btn.dataset.nav);
  });
  document.getElementById('lpExit')?.addEventListener('click',()=>{window.location.href='prototype.html';});
+ document.getElementById('lpRules')?.addEventListener('click',()=>{
+  sessionStorage.setItem('lpReturnView',state.view);
+  window.location.href='constructor-rules.html?from=preview';
+ });
+ const returnView=sessionStorage.getItem('lpReturnView');
+ if(returnView){
+  sessionStorage.removeItem('lpReturnView');
+  state.view=returnView;
+ }
  renderMain();
  updateProgressUi();
 }

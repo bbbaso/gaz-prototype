@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Превью курса — ученик</title>
-<link rel="stylesheet" href="course-preview.css?v=14"/>
+<link rel="stylesheet" href="course-preview.css?v=16"/>
 </head>
 <body class="lp-theme-purple">
 <header class="lp-top">
@@ -15,9 +15,12 @@
       <h1 id="lpCourseTitle">Курс</h1>
     </div>
   </div>
-  <div class="lp-top-progress">
-    <span class="lp-progress-label" id="lpProgressLabel">0%</span>
-    <div class="lp-progress-track"><div class="lp-progress-bar" id="lpProgress"></div></div>
+  <div class="lp-top-right">
+    <button type="button" class="lp-rules" id="lpRules" aria-label="Открыть справочник правил">Справочник</button>
+    <div class="lp-top-progress">
+      <span class="lp-progress-label" id="lpProgressLabel">0%</span>
+      <div class="lp-progress-track"><div class="lp-progress-bar" id="lpProgress"></div></div>
+    </div>
   </div>
 </header>
 <div class="lp-shell">
@@ -27,6 +30,6 @@
   </aside>
   <main class="lp-main" id="lpMain"></main>
 </div>
-<script src="course-preview.js?v=15"></script>
+<script src="course-preview.js?v=16"></script>
 </body>
 </html>

@@ -41,3 +41,10 @@ function renderMatrix() {
 }
 
 renderMatrix();
+
+if (new URLSearchParams(location.search).get('from') === 'preview') {
+  document.getElementById('crBackPreview')?.classList.remove('is-hidden');
+  document.querySelector('.cr-back:not(.cr-back--preview)')?.addEventListener('click', () => {
+    sessionStorage.removeItem('lpReturnView');
+  });
+}
