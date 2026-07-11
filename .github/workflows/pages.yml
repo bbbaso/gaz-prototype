@@ -22,7 +22,7 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p public
-          cp prototype.html index.html app.js styles.css course-preview.html course-preview.css course-preview.js constructor-rules.html constructor-rules.css constructor-rules.js public/
+          cp prototype.html index.html app.js styles.css course-preview.html course-preview.css course-preview.js constructor-rules.html constructor-rules.css constructor-rules.js bp-schema.html bp-schema.css bp-schema.js public/
           cp -r assets public/
           touch public/.nojekyll
 
