@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Схема БП LMS — полный цикл обучения</title>
+  <link rel="stylesheet" href="bp-schema.css"/>
+</head>
+<body>
+<div class="bp-page">
+  <header class="bp-header">
+    <div>
+      <h1>Схема бизнес-процессов LMS</h1>
+      <p>Создание → назначение → прохождение → проверка → отчётность (по ролям и отчётам из xlsx)</p>
+    </div>
+    <div class="bp-toolbar">
+      <button type="button" class="bp-btn" id="exportPngBtn">PNG</button>
+      <button type="button" class="bp-btn" id="exportPdfBtn">PDF</button>
+      <button type="button" class="bp-btn" id="printBtn">Печать</button>
+      <button type="button" class="bp-btn" id="startBtn">К началу</button>
+      <button type="button" class="bp-btn" id="fitBtn">Сброс масштаба</button>
+    </div>
+  </header>
+
+  <div class="bp-legend" aria-label="Легенда ролей">
+    <span class="legend-item"><span class="legend-dot" style="background:#e8f6f8"></span>HR-Куратор</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f5ece2"></span>Администратор</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#ede8f8"></span>Преподаватель</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#e9eef2"></span>Руководитель</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#d8f0f4"></span>Обучающийся</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f1f5f8;border:1px solid #ced7df"></span>Система</span>
+    <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#e2f8ff,#ffe8f4)"></span>AI</span>
+  </div>
+
+  <nav class="bp-legend" id="phaseNav" aria-label="Этапы процесса" style="border-top:0;padding-top:0"></nav>
+
+  <div class="bp-viewport" id="bpViewport">
+    <div class="bp-canvas" id="bpCanvas">
+      <svg class="bp-svg" id="bpSvg" aria-hidden="true"></svg>
+      <div class="bp-grid" id="bpGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="bp-tooltip" id="bpTooltip" aria-hidden="true"></div>
+<div class="bp-export-status hidden" id="exportStatus" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="bp-schema.js"></script>
+</body>
+</html>

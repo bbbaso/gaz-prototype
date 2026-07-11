@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Редакторы материалов — обновлённый прототип</title>
+<link rel="stylesheet" href="styles.css?v=23"/>
+</head>
+<body>
+<header class="top">
+  <div class="head">
+    <button class="icon-circle" type="button" aria-label="Выход"><img src="assets/icons/Logout icon.svg" alt=""></button>
+    <img class="logo" src="assets/logo.png" alt="logo"/>
+    <div class="top-title"><h1>Название материала</h1><span class="badge">Черновик</span></div>
+  </div>
+  <div class="actions">
+    <div class="collab-bar">
+      <div class="collab-avatars" aria-label="Команда в проекте">
+        <span class="collab-avatar" style="background:#D8F0F4" title="Анна К.">АК</span>
+        <span class="collab-avatar" style="background:#F5ECE2" title="Михаил С.">МС</span>
+        <span class="collab-avatar" style="background:#E9EEF2" title="Елена В.">ЕВ</span>
+        <span class="collab-avatar collab-avatar-more" title="Ещё 1">+1</span>
+      </div>
+      <button type="button" class="btn collab-comments-btn" id="collabCommentsBtn" aria-pressed="false">Комментарии</button>
+    </div>
+    <span class="top-sep" aria-hidden="true"></span>
+    <span class="saved"><img src="assets/icons/Status icon.svg" alt="">Сохранено</span>
+    <span class="top-sep" aria-hidden="true"></span>
+    <button class="btn icon" type="button" aria-label="Отменить"><img src="assets/icons/Action undo.svg" alt=""></button>
+    <button class="btn icon" type="button" aria-label="Повторить"><img src="assets/icons/Action icon.svg" alt=""></button>
+    <button class="btn icon" type="button" aria-label="Настройки"><img src="assets/icons/Settings.svg" alt=""></button>
+    <button class="btn preview-btn" type="button">ПРЕВЬЮ</button>
+    <button class="btn primary" type="button">ОТПРАВИТЬ</button>
+  </div>
+</header>
+<div class="demo-remote" id="demoRemote">
+  <button type="button" class="demo-remote-trigger" id="demoRemoteTrigger" aria-expanded="false" aria-controls="demoRemotePanel">
+    <span class="demo-remote-label">Демо-пульт</span>
+    <span class="demo-remote-mode" id="demoRemoteMode">Видео</span>
+    <span class="demo-remote-chevron" aria-hidden="true">⌄</span>
+  </button>
+  <div class="demo-remote-panel hidden" id="demoRemotePanel">
+    <p class="demo-remote-hint">Тип материала для демо</p>
+    <div class="switch">
+      <button class="sw on" data-mode="video" type="button">Видео</button>
+      <button class="sw" data-mode="podcast" type="button">Подкаст</button>
+      <button class="sw" data-mode="longread" type="button">Лонгрид</button>
+      <button class="sw" data-mode="course" type="button">Электронный курс</button>
+    </div>
+  </div>
+</div>
+<section id="video" class="mode"></section><section id="podcast" class="mode hidden"></section><section id="longread" class="mode hidden"></section><section id="course" class="mode hidden"></section>
+<aside class="collab-panel hidden" id="collabPanel" aria-label="Комментарии команды">
+  <div class="collab-panel-head">
+    <div><h3>Комментарии</h3><p class="hint">Совместная работа над материалом</p></div>
+    <button type="button" class="ghost collab-panel-close" id="collabPanelClose" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="collab-panel-tabs"><button type="button" class="collab-tab on">Комментарии</button></div>
+  <div class="collab-threads" id="collabThreads"></div>
+  <div class="collab-compose"><textarea class="field" placeholder="Оставить комментарий или задачу…"></textarea><button type="button" class="btn primary" style="width:100%;margin-top:10px">Отправить</button></div>
+</aside>
+<div class="comment-pins hidden" id="commentPins" aria-hidden="true"></div>
+<button type="button" class="inspect-toggle" id="inspectToggle" aria-pressed="false" title="Подсветка элементов при наведении">◎ Инспекция</button>
+<div class="inspect-tooltip hidden" id="inspectTooltip" aria-hidden="true"></div>
+<script src="app.js?v=25"></script>
+</body>
+</html>

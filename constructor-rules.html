@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Правила блоков конструктора — курс и лонгрид</title>
+<link rel="stylesheet" href="constructor-rules.css?v=3"/>
+</head>
+<body>
+<header class="cr-top">
+  <div class="cr-top-inner">
+    <div class="cr-brand">
+      <div class="cr-logo" aria-hidden="true">CR</div>
+      <div class="cr-brand-text">
+        <span class="cr-kicker">Справочник продукта</span>
+        <h1 class="cr-title">Правила блоков конструктора</h1>
+      </div>
+    </div>
+    <div class="cr-top-actions">
+      <a class="cr-back cr-back--preview is-hidden" id="crBackPreview" href="course-preview.html">← К превью</a>
+      <a class="cr-back" href="prototype.html">← К прототипу</a>
+    </div>
+  </div>
+</header>
+
+<div class="cr-layout">
+  <nav class="cr-nav" aria-label="Содержание">
+    <h2>Разделы</h2>
+    <a href="#base">Базовые правила</a>
+    <a href="#text">Текстовые подтипы</a>
+    <a href="#blocks">Правила по блокам</a>
+    <a href="#matrix">Матрица соседства</a>
+    <a href="#patterns">Шаблоны порядка</a>
+    <a href="#limits">Лимиты урока</a>
+    <a href="#spacing">Отступы между блоками</a>
+  </nav>
+
+  <main class="cr-main">
+    <section class="cr-hero">
+      <h1>Правила сборки материала</h1>
+      <p>Экспертные рекомендации для конструктора электронного курса и лонгрида: как блоки соседствуют, куда вставляются и какие ограничения держат материал понятным для ученика.</p>
+      <div class="cr-tags">
+        <span class="cr-tag">12 типов блоков</span>
+        <span class="cr-tag">Плоский список</span>
+        <span class="cr-tag">Drag-and-drop</span>
+        <span class="cr-tag">Курс + лонгрид</span>
+      </div>
+    </section>
+
+    <blockquote class="cr-quote">
+      Материал собирается из <strong>независимых блоков в фиксированном порядке</strong>. Текст, картинки и схемы <strong>не вкладываются друг в друга</strong> — это даёт предсказуемый вид на всех устройствах, простое перетаскивание и возможность автогенерации.
+    </blockquote>
+
+    <section class="cr-section" id="base">
+      <h2>0. Базовые правила архитектуры</h2>
+      <p class="cr-lead">Фиксируем один раз и не пересматриваем при отрисовке каждого блока.</p>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr>
+              <th>Вопрос</th>
+              <th>Решение</th>
+              <th>Почему</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Вложенность блоков</td><td><strong>Нет.</strong> Только плоский список</td><td>Проще drag-and-drop, превью, тесты, AI</td></tr>
+            <tr><td>Картинка внутри текста</td><td><strong>Нет</strong></td><td>Не ломаются порядок, мобилка, переиспользование</td></tr>
+            <tr><td>Текст обтекает картинку</td><td><strong>Нет</strong></td><td>Нужна предсказуемая учебная вёрстка</td></tr>
+            <tr><td>Порядок блоков</td><td><strong>Свободный</strong>, drag-and-drop</td><td>Автор сам строит нарратив</td></tr>
+            <tr><td>Добавление блока</td><td>Палитра справа <strong>или</strong> «+» между блоками</td><td>Два равноправных пути</td></tr>
+            <tr><td>Куда вставляется новый блок</td><td>После выбранного, иначе <strong>в конец</strong></td><td>Предсказуемое поведение</td></tr>
+            <tr><td>Единица редактирования</td><td><strong>Урок / раздел</strong></td><td>Совпадает с левой навигацией</td></tr>
+            <tr><td>Лонгрид vs курс</td><td><strong>Одинаковые правила блоков</strong></td><td>Меньше дублирования в дизайне и коде</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cr-section" id="text">
+      <h2>1. Текст: внутренняя структура</h2>
+      <p class="cr-lead">В палитре одна кнопка «Текст», но в материале — четыре логических подтипа. Рекомендуем считать их отдельными блоками в списке.</p>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr>
+              <th>Подтип</th>
+              <th>Как появляется</th>
+              <th>Несколько подряд</th>
+              <th>Рекомендация</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>H2</strong></td><td>Текст + уровень заголовка</td><td>Да, но не более 1 H2 на смысловый блок</td><td>Новый раздел урока — новый H2</td></tr>
+            <tr><td><strong>H3</strong></td><td>Из текста / отдельная вставка</td><td>Да</td><td>Только после H2 или другого H3</td></tr>
+            <tr><td><strong>Абзац</strong></td><td>Кнопка «Текст» по умолчанию</td><td>Да</td><td>Основной носитель теории, 3–7 абзацев на раздел</td></tr>
+            <tr><td><strong>Список</strong></td><td>Из текста / отдельная вставка</td><td>Да</td><td>После абзаца или H3; не два списка подряд без текста</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cr-foot" style="text-align:left;margin-top:14px"><strong>Жёсткое правило:</strong> урок начинается с H2 (или шапка урока + первый H2 в теле).</p>
+    </section>
+
+    <section class="cr-section" id="blocks">
+      <h2>2. Правила по каждому элементу</h2>
+      <p class="cr-lead">Экспертные ограничения для палитры конструктора курса и лонгрида.</p>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr>
+              <th>Элемент</th>
+              <th>Лимит / урок</th>
+              <th>Что должно быть до</th>
+              <th>Что логично после</th>
+              <th>Решение эксперта</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Текст (абзац)</td><td>∞</td><td>H2 / H3 желательно</td><td>Любой блок</td><td>Основной блок теории</td></tr>
+            <tr><td>H2</td><td>1–4</td><td>—</td><td>Абзац, список, медиа</td><td>Делит урок на разделы</td></tr>
+            <tr><td>H3</td><td>∞</td><td>Только H2 или H3</td><td>Абзац, список</td><td>Не первым блоком урока</td></tr>
+            <tr><td>Список</td><td>∞</td><td>Абзац или H3</td><td>Абзац, важный блок</td><td>3–7 пунктов, длинные дробить</td></tr>
+            <tr><td>Изображение</td><td>0–5</td><td>Абзац или H3</td><td>Абзац с пояснением</td><td>Всегда с подписью</td></tr>
+            <tr><td>Видео</td><td>0–2</td><td>H2/H3 + контекст</td><td>Абзац-резюме</td><td>Не первым; не два подряд</td></tr>
+            <tr><td>Файл</td><td>0–3</td><td>Шаги / абзац</td><td>Важный блок</td><td>Дополнение, не вместо текста</td></tr>
+            <tr><td>Важный блок</td><td>1–3</td><td>Контентный блок</td><td>Продолжение темы</td><td>Не подряд; не в начале урока</td></tr>
+            <tr><td>Шаги</td><td>0–2</td><td>H2/H3 + контекст</td><td>Файл / важный</td><td>3–7 шагов, только для процедур</td></tr>
+            <tr><td>Временная шкала</td><td>0–1</td><td>H2 + вводный абзац</td><td>Вывод / важный</td><td>3–6 точек, для кейсов</td></tr>
+            <tr><td>Глоссарий</td><td>0–1</td><td>Хотя бы 1 H2</td><td>—</td><td>3–10 терминов, в конце урока</td></tr>
+            <tr><td>Маркир. изображение</td><td>0–2</td><td>Абзац контекста</td><td>Абзац / список</td><td>2–6 маркеров + подпись</td></tr>
+            <tr><td>Таблица</td><td>0–2</td><td>H2/H3 + зачем таблица</td><td>Абзац-вывод</td><td>До 6 колонок</td></tr>
+            <tr><td>Диаграмма</td><td>0–2</td><td>Абзац контекста</td><td>Абзац пояснения</td><td>Статичная схема</td></tr>
+            <tr><td>Блок-схема</td><td>0–1</td><td>H2 «Алгоритм…»</td><td>Важный блок</td><td>3–8 шагов, для процессов</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cr-section" id="matrix">
+      <h2>3. Можно ли ставить блоки рядом?</h2>
+      <p class="cr-lead">Эта таблица отвечает на простой вопрос: <strong>если один блок уже стоит в уроке, можно ли сразу после него поставить другой?</strong></p>
+
+      <div class="cr-example">
+        <p class="cr-example-title">Как читать таблицу</p>
+        <ol>
+          <li>Найдите в <strong>левом столбце</strong> блок, который уже есть в уроке.</li>
+          <li>Посмотрите на пересечение с <strong>верхней строкой</strong> — какой блок хотите добавить следом.</li>
+          <li>Оцените отметку в ячейке.</li>
+        </ol>
+        <p class="cr-example-sample">Пример: после <strong>«Абзац»</strong> можно поставить <strong>«Видео»</strong> — в строке «Текст» на пересечении со столбцом «Видео» стоит <span class="cr-pill cr-pill--ok">✓</span>. А вот после <strong>«Видео»</strong> сразу ещё одно <strong>«Видео»</strong> — <span class="cr-pill cr-pill--no">✕</span>: конструктор должен предупредить.</p>
+      </div>
+
+      <p class="cr-lead">
+        <span class="cr-pill cr-pill--ok">✓</span> можно без предупреждения ·
+        <span class="cr-pill cr-pill--warn">!</span> можно, но показать подсказку ·
+        <span class="cr-pill cr-pill--no">✕</span> лучше запретить или сильно предупредить
+      </p>
+      <div class="cr-table-wrap">
+        <table class="cr-table cr-matrix" id="matrixTable"></table>
+      </div>
+    </section>
+
+    <section class="cr-section" id="patterns">
+      <h2>4. Рекомендуемые шаблоны порядка</h2>
+      <p class="cr-lead">Не обязательные пресеты, но золотые паттерны для авторов.</p>
+      <div class="cr-cards">
+        <article class="cr-card">
+          <h3>A — Теория</h3>
+          <div class="cr-pattern">H2 → абзац → абзац → список → изображение → абзац → важный блок</div>
+        </article>
+        <article class="cr-card">
+          <h3>B — Инструкция</h3>
+          <div class="cr-pattern">H2 → абзац → шаги → файл → важный блок</div>
+        </article>
+        <article class="cr-card">
+          <h3>C — Кейс / инцидент</h3>
+          <div class="cr-pattern">H2 → абзац → таймлайн → абзац-вывод → важный блок</div>
+        </article>
+        <article class="cr-card">
+          <h3>D — Справочник</h3>
+          <div class="cr-pattern">H2 → абзац → таблица → абзац → глоссарий</div>
+        </article>
+        <article class="cr-card">
+          <h3>E — Схема процесса</h3>
+          <div class="cr-pattern">H2 → абзац → блок-схема → важный блок</div>
+        </article>
+        <article class="cr-card">
+          <h3>F — Разбор объекта</h3>
+          <div class="cr-pattern">H2 → абзац → марк. изображение → список → абзац</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="cr-section" id="limits">
+      <h2>5. Лимиты на уровне урока</h2>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Параметр</th><th>Лимит</th><th>Действие в UI</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Блоков всего</td><td>25 мягко / 40 жёстко</td><td>Предупреждение / блокировка</td></tr>
+            <tr><td>Видео</td><td>max 2</td><td>Предупреждение</td></tr>
+            <tr><td>Важный блок</td><td>max 3</td><td>Предупреждение</td></tr>
+            <tr><td>Таймлайн</td><td>max 1</td><td>Блокировка второго</td></tr>
+            <tr><td>Глоссарий</td><td>max 1</td><td>Блокировка второго</td></tr>
+            <tr><td>Блок-схема</td><td>max 1</td><td>Блокировка второго</td></tr>
+            <tr><td>Медиа подряд</td><td>max 2</td><td>«Добавьте текст между»</td></tr>
+            <tr><td>H2 подряд</td><td>разрешено</td><td>«Объединить в один раздел?»</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cr-section" id="spacing">
+      <h2>6. Отступы между блоками</h2>
+      <p class="cr-lead">Между элементами в уроке не нужна отдельная матрица «текст → фото → диаграмма». Достаточно <strong>одной шкалы отступов</strong> и нескольких явных исключений для заголовков и связанного текста.</p>
+
+      <div class="cr-example">
+        <p class="cr-example-title">Базовый принцип</p>
+        <p class="cr-example-sample">Блоки урока — это вертикальный список. Контейнер задаёт единый <strong>gap</strong> между соседями. Отступ — это ритм урока, а не свойство каждой пары типов.</p>
+        <div class="cr-pattern">.lp-lesson-body { display: flex; flex-direction: column; gap: var(--space-m); }</div>
+      </div>
+
+      <h3 class="cr-subhead">Шкала отступов (токены)</h3>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Токен</th><th>Значение</th><th>Где используется</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>--space-xs</code></td><td>12px</td><td>Внутри блока: подпись к картинке, мелкие подписи</td></tr>
+            <tr><td><code>--space-s</code></td><td>24px</td><td>Связанный текст: H3 → абзац, абзац → список</td></tr>
+            <tr><td><code>--space-m</code></td><td><strong>40px</strong></td><td><strong>Стандарт между любыми двумя блоками</strong></td></tr>
+            <tr><td><code>--space-l</code></td><td>60px</td><td>Перед новым разделом (H2), вокруг «тяжёлых» блоков</td></tr>
+            <tr><td><code>--space-xl</code></td><td>88px</td><td>Редко: крупное медиа, переход к тесту</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Категории блоков</h3>
+      <p class="cr-lead">Между категориями — тот же <code>--space-m</code>, если нет исключения ниже.</p>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Категория</th><th>Типы</th><th>Внешний отступ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Текст</td><td>H2, H3, абзац, список</td><td><code>m</code>; у H2/H3 — см. исключения</td></tr>
+            <tr><td>Медиа</td><td>изображение, видео, аудио, диаграмма, марк. изображение</td><td><code>m</code>, при необходимости <code>l</code> сверху</td></tr>
+            <tr><td>Структурные</td><td>шаги, таймлайн, таблица, блок-схема, глоссарий</td><td><code>m</code> или <code>l</code> — блок «тяжёлый»</td></tr>
+            <tr><td>Акцент</td><td>важный блок, файл</td><td>не меньше <code>m</code> сверху и снизу</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Исключения (7 правил)</h3>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Ситуация</th><th>Отступ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>H2</strong> — новый раздел</td><td>Сверху <code>l</code> (60px), кроме первого блока в уроке; до следующего блока эффект <code>s</code> (24px)</td></tr>
+            <tr><td><strong>H3</strong> — подраздел</td><td>Сверху <code>m</code>; до абзаца/списка подряд — <code>s</code></td></tr>
+            <tr><td>Связанный текст подряд</td><td>H3 → абзац, абзац → список: <code>s</code> вместо <code>m</code></td></tr>
+            <tr><td>Медиа после текста</td><td>Стандарт <code>m</code>; подпись — внутри блока (<code>xs</code>)</td></tr>
+            <tr><td>Два медиа подряд</td><td>Не уменьшать gap; лучше предупреждение в конструкторе</td></tr>
+            <tr><td>Тяжёлые и акцентные блоки</td><td>Сверху и снизу не меньше <code>m</code></td></tr>
+            <tr><td>Первый / последний блок</td><td>Без лишнего margin — отступ даёт padding плашки урока</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Чего не делать</h3>
+      <div class="cr-table-wrap">
+        <table class="cr-table">
+          <thead>
+            <tr><th>Подход</th><th>Почему плохо</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>У каждого блока свой margin-top и margin-bottom</td><td>Схлопывание margin, разный вид в редакторе и превью</td></tr>
+            <tr><td>Матрица отступов для всех пар типов</td><td>Сотни значений, сложно поддерживать</td></tr>
+            <tr><td>Отступ зависит от ширины контента блока</td><td>Непредсказуемо для автора</td></tr>
+            <tr><td>Копировать Word (Enter = отступ)</td><td>В блочной модели нет смысла</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="cr-subhead">Спека для разработки</h3>
+      <div class="cr-pattern">DEFAULT: gap между блоками = 40px (--space-m)
+
+H2: margin-top 60px (кроме первого в уроке)
+H3 + text/list подряд: 24px между соседями
+Все остальные пары: 40px
+
+Внутренние отступы — в компоненте блока, не в gap урока
+Редактор и превью ученика — одни и те же токены</div>
+
+      <blockquote class="cr-quote" style="margin-top:20px;margin-bottom:0">
+        Для заказчика: «Между элементами везде одинаковый стандартный интервал. Чуть больше — только перед новым разделом и вокруг крупных вставок. Уменьшать отступы имеет смысл только внутри связанного текста, а не для каждой пары типов блоков».
+      </blockquote>
+    </section>
+
+    <p class="cr-foot">Версия справочника · май 2026 · gaz-prototype</p>
+  </main>
+</div>
+
+<script src="constructor-rules.js?v=2"></script>
+</body>
+</html>
